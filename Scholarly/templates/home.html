@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block title %}Home - Study App{% endblock %}
+{% block content %}
+<div class="text-center mb-5">
+  <h1 class="display-5 fw-bold">Welcome to StudyApp</h1>
+  <p class="lead">Your all-in-one platform to take notes, review quizzes, and boost your learning game.</p>
+  {% if not current_user.is_authenticated %}
+    <a href="/login" class="btn btn-primary btn-lg mt-3 me-2">Log In</a>
+    <a href="/signup" class="btn btn-outline-secondary btn-lg mt-3">Sign Up</a>
+  {% else %}
+    <a href="/notes" class="btn btn-primary btn-lg mt-3">Start Studying</a>
+  {% endif %}
+</div>
+
+{% if current_user.is_authenticated %}
+<div class="row g-4">
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">📝 Notes</h5>
+        <p class="card-text">Create and organize your study notes in one place. No more clutter.</p>
+        <a href="/notes" class="btn btn-outline-primary">Go to Notes</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">🧠 Quizzes</h5>
+        <p class="card-text">Test yourself with auto-generated quizzes to sharpen your understanding.</p>
+        <a href="/quizzes" class="btn btn-outline-primary">Take a Quiz</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">👤 Profile</h5>
+        <p class="card-text">Track your progress, recent activity, and personalize your learning journey.</p>
+        <a href="/profile" class="btn btn-outline-primary">View Profile</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

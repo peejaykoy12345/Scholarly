@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block title %}Login - Study App{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <h2 class="mb-4 text-center">Log In</h2>
+    <form method="POST">
+      {{ form.hidden_tag() }}
+      <div class="mb-3">
+        {{ form.email.label(class="form-label") }}
+        {{ form.email(class="form-control", placeholder="Enter email") }}
+      </div>
+      <div class="mb-3">
+        {{ form.password.label(class="form-label") }}
+        {{ form.password(class="form-control", placeholder="Enter password") }}
+      </div>
+      <div class="d-grid">
+        {{ form.submit(class="btn btn-primary") }}
+      </div>
+      <div class="text-center mt-3">
+        <a href="/signup">Don't have an account? Sign up</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
