@@ -5,6 +5,8 @@ Flask-WTF
 Flask-Bcrypt
 email-validator
 WTForms
+PyMuPDF
+easyocr
 transformers
 datasets
 huggingface_hub
