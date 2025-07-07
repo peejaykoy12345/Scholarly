@@ -5,6 +5,8 @@ Flask-WTF
 Flask-Bcrypt
 email-validator
 WTForms
-transformers datasets huggingface_hub
+transformers
+datasets
+huggingface_hub
 Pillow
 gunicorn
