@@ -1,5 +1,6 @@
 from Scholarly import db, app, login_manager
 from flask_login import UserMixin
+from datetime import datetime
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -16,3 +17,4 @@ class Notes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     content = db.Column(db.String(20000), unique=True, nullable=False)
+    date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)

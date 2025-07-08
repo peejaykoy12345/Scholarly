@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block title %}Create Note{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Create a Note</h2>
+  <form method="POST">
+    {{ form.hidden_tag() }}
+
+    <div class="mb-3">
+      {{ form.title.label(class="form-label") }}
+      {{ form.title(class="form-control", placeholder="Enter note title") }}
+      {% if form.title.errors %}
+        <div class="text-danger">
+          {% for error in form.title.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      {{ form.content.label(class="form-label") }}
+      {{ form.content(class="form-control", placeholder="Enter note content") }}
+      {% if form.content.errors %}
+        <div class="text-danger">
+          {% for error in form.content.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <button type="submit" class="btn btn-success">{{ form.submit.label.text }}</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends "layout.html" %}
+{% block title %}Your Notes{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Your Notes</h2>
+    <!-- Button trigger modal -->
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createNoteModal">
+      + Create Note
+    </button>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  {% if notes.items %}
+    <div class="list-group">
+      {% for note in notes.items %}
+        <div class="list-group-item mb-2 shadow-sm rounded">
+          <small class="text-muted float-end">{{ note.date_created.strftime('%Y-%m-%d %H:%M') }}</small>
+          <p class="mb-1">{{ note.content }}</p>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Page navigation" class="mt-4">
+      <ul class="pagination justify-content-center">
+        {% if notes.has_prev %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('notes', page=notes.prev_num) }}">Previous</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <span class="page-link">Previous</span>
+          </li>
+        {% endif %}
+
+        {% for page_num in notes.iter_pages() %}
+          {% if page_num %}
+            {% if page_num == notes.page %}
+              <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+            {% else %}
+              <li class="page-item"><a class="page-link" href="{{ url_for('notes', page=page_num) }}">{{ page_num }}</a></li>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+
+        {% if notes.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('notes', page=notes.next_num) }}">Next</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <span class="page-link">Next</span>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% else %}
+    <p class="text-muted">No notes yet. Create one to get started!</p>
+  {% endif %}
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="createNoteModal" tabindex="-1" aria-labelledby="createNoteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow-lg">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createNoteModalLabel">Choose Note Type</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p class="mb-4">How would you like to create your note?</p>
+        <a href="{{ url_for('create_note') }}" class="btn btn-outline-primary me-2">📝 Manually</a>
+        <a href="{{ url_for('ai_note') }}" class="btn btn-outline-success">🤖 Use AI</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

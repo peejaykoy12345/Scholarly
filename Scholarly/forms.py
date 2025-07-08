@@ -33,3 +33,8 @@ class AccountForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), length(min=2, max=15)])
     picture = FileField('Update profile picture', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Update')
+
+class CreateForm(FlaskForm):
+    title = StringField("Title", validators=[DataRequired()])
+    content = StringField("Content", validators=[DataRequired()])
+    submit = SubmitField("Create")

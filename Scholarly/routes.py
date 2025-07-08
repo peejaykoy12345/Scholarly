@@ -49,3 +49,12 @@ def register():
 def logout():
     logout_user()
     return redirect(url_for('home'))
+
+def 
+
+@app.route('/notes')
+@login_required
+def notes():
+    page = request.args.get('page', 1, type=int)
+    notes = Notes.query.filter_by(owner_id=current_user.id).order_by(Notes.date_created.desc()).paginate(page=page, per_page=10)
+    return render_template('notes.html', notes=notes)
