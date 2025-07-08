@@ -3,8 +3,11 @@ from flask import render_template, flash, redirect, request, url_for
 from flask_login import current_user, login_required, logout_user, login_user
 from Scholarly import app, db, bcrypt
 from Scholarly.models import User, Notes
-from Scholarly.forms import LoginForm, RegistrationForm, AccountForm
+from Scholarly.forms import LoginForm, RegistrationForm, AccountForm, CreateNoteForm, CreateAINotes
 from PIL import Image
+from werkzeug.utils import secure_filename
+from AI.text_extracter import extract_text
+from AI.summarize import summarize_text
 
 @app.route('/')
 @app.route('/home')
@@ -50,7 +53,50 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
-def 
+@app.route('/manually_create_notes', methods=["GET", "POST"])
+@login_required
+def manually_create_notes():
+    form = CreateNoteForm()
+    if form.validate_on_submit():
+        note = Notes(
+            title=form.title.data,
+            content=form.content.data
+        )
+        db.session.add(note)
+        db.session.commit()
+        flash("Your note has been created!", 'success')
+        return redirect(url_for('notes'))
+    return render_template('manually_create_notes.html')
+
+@app.route('/create_ai_notes', methods=['GET', 'POST'])
+@login_required
+def create_ai_notes():
+    form = CreateAINotes()
+    if request.method == 'POST':
+        if form.type.data == 'Summarize':
+            uploaded_file = form.file.data
+            if uploaded_file:
+                filename = secure_filename(uploaded_file.filename)
+
+                save_path = os.path.join("uploads", filename)
+                uploaded_file.save(save_path)
+                
+                text = extract_text(save_path)
+
+                summarized_text = summarize_text(text)
+
+                os.remove(save_path)
+
+                note = Notes(
+                    title=form.title.data,
+                    content=summarized_text
+                )
+
+                db.session.add(note)
+                db.session.commit()
+
+                
+    return render_template('create_ai_notes.html')
 
 @app.route('/notes')
 @login_required

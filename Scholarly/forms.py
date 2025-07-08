@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, FileField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, FileField, SelectField
 from flask_wtf.file import FileAllowed
 from wtforms.validators import DataRequired, length,EqualTo, ValidationError, Email
 from Scholarly.models import User
@@ -34,7 +34,25 @@ class AccountForm(FlaskForm):
     picture = FileField('Update profile picture', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Update')
 
-class CreateForm(FlaskForm):
+class CreateNoteForm(FlaskForm):
     title = StringField("Title", validators=[DataRequired()])
     content = StringField("Content", validators=[DataRequired()])
     submit = SubmitField("Create")
+
+from flask_wtf import FlaskForm
+from wtforms import SelectField, SubmitField
+from flask_wtf.file import FileField, FileAllowed
+from wtforms.validators import DataRequired
+
+class CreateAINotes(FlaskForm):
+    title = StringField("Title", validators=[DataRequired()])
+    type = SelectField(
+        'Select how you want your notes to be made',
+        choices=[('Summarize', 'Summarize')],
+        validators=[DataRequired()]
+    )
+    file = FileField(
+        'Upload image or PDF',
+        validators=[FileAllowed(['jpg', 'jpeg', 'png', 'pdf'], 'Images or PDFs only!')]
+    )
+    submit = SubmitField("Create notes")
