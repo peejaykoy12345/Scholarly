@@ -1,19 +1,22 @@
-{% extends "layout.html" %}
-{% block title %}AI Note Creation{% endblock %}
-
-{% block content %}
-<div class="container mt-5 text-center">
-  <h2>Generate Notes with AI 🤖</h2>
-  <p class="mb-4 text-muted">Choose a file to summarize into notes</p>
-
-  <div class="d-grid gap-3 col-6 mx-auto">
-    <a href="#" class="btn btn-outline-primary">📄 Upload PDF</a>
-    <a href="#" class="btn btn-outline-secondary">🖼️ Upload Image</a>
-    <a href="#" class="btn btn-outline-dark">🧠 Paste Text Instead</a>
+<form method="POST" enctype="multipart/form-data">
+  {{ form.hidden_tag() }}
+  <div class="form-group">
+    {{ form.title.label }}
+    {{ form.title(class="form-control") }}
+    {% for error in form.title.errors %}
+      <div class="text-danger">{{ error }}</div>
+    {% endfor %}
   </div>
 
-  <div class="mt-4">
-    <a href="{{ url_for('notes') }}" class="btn btn-link">← Back to Notes</a>
+  <div class="form-group">
+    {{ form.type.label }}
+    {{ form.type(class="form-select") }}
   </div>
-</div>
-{% endblock %}
+
+  <div class="form-group">
+    {{ form.file.label }}
+    {{ form.file(class="form-control") }}
+  </div>
+
+  <button type="submit" name="preview" class="btn btn-warning">Preview</button>
+</form>

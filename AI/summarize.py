@@ -1,13 +1,10 @@
 from transformers.pipelines import pipeline
 
-print("Hi")
 #summarize_long_text = pipeline("summarization", model="pszemraj/led-large-book-summary")
 #summarize_medium_sized_text = pipeline("summarization", model="facebook/bart-large-cnn")
 summarize_short_sized_text = pipeline("summarization", model="sshleifer/distilbart-cnn-12-6")
-print("hello")
 
 def summarize_text(text: str) -> str:
-    print("Summarizing type shi ")
     if not text or len(text.strip()) == 0:
         return "No input provided"
     try:

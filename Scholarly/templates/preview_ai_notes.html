@@ -1,0 +1,9 @@
+<h2>Preview Your AI Notes</h2>
+
+<h4>{{ title }}</h4>
+<pre>{{ content }}</pre>
+
+<form method="POST">
+  <button type="submit" name="confirm" class="btn btn-success">Confirm & Save</button>
+  <a href="{{ url_for('create_ai_notes') }}" class="btn btn-secondary">Go Back</a>
+</form>

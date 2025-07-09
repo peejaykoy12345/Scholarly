@@ -1,5 +1,5 @@
 import secrets, os
-from flask import render_template, flash, redirect, request, url_for
+from flask import render_template, flash, redirect, request, url_for, session
 from flask_login import current_user, login_required, logout_user, login_user
 from Scholarly import app, db, bcrypt
 from Scholarly.models import User, Notes
@@ -72,31 +72,44 @@ def manually_create_notes():
 @login_required
 def create_ai_notes():
     form = CreateAINotes()
-    if request.method == 'POST':
-        if form.type.data == 'Summarize':
-            uploaded_file = form.file.data
-            if uploaded_file:
-                filename = secure_filename(uploaded_file.filename)
+    if request.method == "POST":
+        if form.validate_on_submit():
+            if form.type.data == 'Summarize':
+                if 'preview' in request.form:
+                    uploaded_file = form.file.data
+                    if uploaded_file:
+                        filename = secure_filename(uploaded_file.filename)
+                        save_path = os.path.join("uploads", filename)
+                        uploaded_file.save(save_path)
 
-                save_path = os.path.join("uploads", filename)
-                uploaded_file.save(save_path)
+                        text = extract_text(save_path)
+                        print(type(text))
+                        summarized_text = summarize_text(text)
+
+                        os.remove(save_path)
+
+                        session['title'] = form.title.data
+                        session['summarized_text'] = summarized_text
+
+                        return render_template(
+                            'preview_ai_notes.html',
+                            title=form.title.data,
+                            content=summarized_text
+                        )
+                elif 'confirm' in request.form:
+                    note = Notes(
+                        title=session.get('title'),
+                        content=session.get('summarized_text'),
+                        owner_id=current_user.id
+                    )
+                    db.session.add(note)
+                    db.session.commit()
+                    session.pop('title', None)
+                    session.pop('summarized_text', None)
+
+                    flash("Note saved successfully!", "success")
                 
-                text = extract_text(save_path)
-
-                summarized_text = summarize_text(text)
-
-                os.remove(save_path)
-
-                note = Notes(
-                    title=form.title.data,
-                    content=summarized_text
-                )
-
-                db.session.add(note)
-                db.session.commit()
-
-                
-    return render_template('create_ai_notes.html')
+    return render_template('create_ai_notes.html', form=form)
 
 @app.route('/notes')
 @login_required

@@ -5,7 +5,6 @@
 <div class="container mt-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Your Notes</h2>
-    <!-- Button trigger modal -->
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createNoteModal">
       + Create Note
     </button>
@@ -32,7 +31,6 @@
       {% endfor %}
     </div>
 
-    <!-- Pagination -->
     <nav aria-label="Page navigation" class="mt-4">
       <ul class="pagination justify-content-center">
         {% if notes.has_prev %}
@@ -71,7 +69,6 @@
   {% endif %}
 </div>
 
-<!-- Modal -->
 <div class="modal fade" id="createNoteModal" tabindex="-1" aria-labelledby="createNoteModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content shadow-lg">
@@ -81,8 +78,8 @@
       </div>
       <div class="modal-body text-center">
         <p class="mb-4">How would you like to create your note?</p>
-        <a href="{{ url_for('create_note') }}" class="btn btn-outline-primary me-2">📝 Manually</a>
-        <a href="{{ url_for('ai_note') }}" class="btn btn-outline-success">🤖 Use AI</a>
+        <a href="{{ url_for('manually_create_notes') }}" class="btn btn-outline-primary me-2">📝 Manually</a>
+        <a href="{{ url_for('create_ai_notes') }}" class="btn btn-outline-success">🤖 Use AI</a>
       </div>
     </div>
   </div>
