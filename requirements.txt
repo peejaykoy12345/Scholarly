@@ -12,5 +12,3 @@ datasets
 huggingface_hub
 Pillow
 gunicorn
-paddleocr>=2.6
-paddlepaddle
