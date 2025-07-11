@@ -1,9 +1,18 @@
-<h2>Preview Your AI Notes</h2>
+{% extends "layout.html" %}
+{% block title %}Preview AI Notes{% endblock %}
+{% block content %}
+<div class="card p-4 shadow-sm">
+  <h2 class="mb-3">📄 Preview Your AI Notes</h2>
 
-<h4>{{ title }}</h4>
-<pre>{{ content }}</pre>
+  <h4 class="text-primary">{{ title }}</h4>
 
-<form method="POST">
-  <button type="submit" name="confirm" class="btn btn-success">Confirm & Save</button>
-  <a href="{{ url_for('create_ai_notes') }}" class="btn btn-secondary">Go Back</a>
-</form>
+  <div class="bg-light border rounded p-3 mb-4" style="white-space: pre-wrap;">
+    {{ content }}
+  </div>
+
+  <form method="POST" class="d-flex gap-2">
+    <button type="submit" name="confirm" class="btn btn-success">✅ Confirm & Save</button>
+    <a href="{{ url_for('create_ai_notes') }}" class="btn btn-secondary">🔙 Go Back</a>
+  </form>
+</div>
+{% endblock %}

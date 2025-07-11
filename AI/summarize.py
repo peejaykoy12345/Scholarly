@@ -12,7 +12,7 @@ def summarize_text(text: str) -> str:
         print("Summarizer raw result:", result)
         if not result:
             return "⚠️ Summarizer returned nothing."
-        return result
+        return result[0]['summary_text']
     except Exception as e:
         import traceback
         traceback.print_exc()

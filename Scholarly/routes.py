@@ -1,5 +1,5 @@
 import secrets, os
-from flask import render_template, flash, redirect, request, url_for, session
+from flask import render_template, flash, redirect, request, url_for, session, abort
 from flask_login import current_user, login_required, logout_user, login_user
 from Scholarly import app, db, bcrypt
 from Scholarly.models import User, Notes
@@ -74,6 +74,20 @@ def manually_create_notes():
 def create_ai_notes():
     form = CreateAINotes()
     if request.method == "POST":
+        if 'confirm' in request.form:
+            note = Notes(
+                title=session.get('title'),
+                content=session.get('summarized_text'),
+                owner_id=current_user.id
+            )
+            db.session.add(note)
+            db.session.commit()
+            session.pop('title', None)
+            session.pop('summarized_text', None)
+
+            flash("Note saved successfully!", "success")
+            return redirect(url_for('notes'))
+
         if form.validate_on_submit():
             if form.type.data == 'Summarize':
                 if 'preview' in request.form:
@@ -97,18 +111,6 @@ def create_ai_notes():
                             title=form.title.data,
                             content=summarized_text
                         )
-                elif 'confirm' in request.form:
-                    note = Notes(
-                        title=session.get('title'),
-                        content=session.get('summarized_text'),
-                        owner_id=current_user.id
-                    )
-                    db.session.add(note)
-                    db.session.commit()
-                    session.pop('title', None)
-                    session.pop('summarized_text', None)
-
-                    flash("Note saved successfully!", "success")
                 
     return render_template('create_ai_notes.html', form=form)
 
@@ -118,3 +120,16 @@ def notes():
     page = request.args.get('page', 1, type=int)
     notes = Notes.query.filter_by(owner_id=current_user.id).order_by(Notes.date_created.desc()).paginate(page=page, per_page=10)
     return render_template('notes.html', notes=notes)
+
+@app.route('/quizzes')
+@login_required
+def quizzes():
+    pass
+
+@app.route('/create_quiz/<int:note_id>')
+@login_required
+def create_quiz(note_id):
+    note = Notes.get_or_404(note_id)
+    if not note:
+        abort(403)
+    
