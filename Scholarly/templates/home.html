@@ -6,7 +6,7 @@
   <p class="lead">Your all-in-one platform to take notes, review quizzes, and boost your learning game.</p>
   {% if not current_user.is_authenticated %}
     <a href="/login" class="btn btn-primary btn-lg mt-3 me-2">Log In</a>
-    <a href="/signup" class="btn btn-outline-secondary btn-lg mt-3">Sign Up</a>
+    <a href="/register" class="btn btn-outline-secondary btn-lg mt-3">Sign Up</a>
   {% else %}
     <a href="/notes" class="btn btn-primary btn-lg mt-3">Start Studying</a>
   {% endif %}

@@ -8,13 +8,37 @@ def summarize_text(text: str) -> str:
     if not text or len(text.strip()) == 0:
         return "No input provided"
     try:
-        #if len(text.strip()) <= 30:
-        return summarize_short_sized_text(text)[0]['summary_text']
-        #if len(text.strip()) <= 4000:
-            #return summarize_medium_sized_text(text)[0]['summary_text']
-        #else:
-            #return summarize_long_text(text)[0]['summary_text']
+        result = summarize_short_sized_text(text)
+        print("Summarizer raw result:", result)
+        if not result:
+            return "⚠️ Summarizer returned nothing."
+        return result
     except Exception as e:
-        return f"Error summarizing: {str(e)}"
+        import traceback
+        traceback.print_exc()
+        return f"❌ Error summarizing: {str(e)}"
     
+def split_text(text, max_chars=1000):
+    chunks = []
+    start = 0
+    length = len(text)
+
+    while start < length:
+        end = min(start + max_chars, length)
+        chunks.append(text[start:end])
+        start = end
+
+    return chunks
     
+def summarize_long_text(text: str) -> str:
+    chunks = split_text(text)
+    summarized = []
+    summarized_text = ""
+
+    for _, chunk in enumerate(chunks):
+        summarized.append(summarize_text(chunk))
+
+    for i in range(len(summarized)):
+        summarized_text +=  summarized[i] 
+
+    return summarized_text if len(summarized) > 0 else "None"

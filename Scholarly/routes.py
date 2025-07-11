@@ -59,6 +59,7 @@ def manually_create_notes():
     form = CreateNoteForm()
     if form.validate_on_submit():
         note = Notes(
+            owner_id=current_user.id,
             title=form.title.data,
             content=form.content.data
         )
@@ -66,7 +67,7 @@ def manually_create_notes():
         db.session.commit()
         flash("Your note has been created!", 'success')
         return redirect(url_for('notes'))
-    return render_template('manually_create_notes.html')
+    return render_template('manually_create_notes.html', form=form)
 
 @app.route('/create_ai_notes', methods=['GET', 'POST'])
 @login_required

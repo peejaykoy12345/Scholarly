@@ -21,7 +21,7 @@
 
     <div class="mb-3">
       {{ form.content.label(class="form-label") }}
-      {{ form.content(class="form-control", placeholder="Enter note content") }}
+      {{ form.content(class="form-control", placeholder="Enter note content", rows="10", style="resize: vertical;") }}
       {% if form.content.errors %}
         <div class="text-danger">
           {% for error in form.content.errors %}

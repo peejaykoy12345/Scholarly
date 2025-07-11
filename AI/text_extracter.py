@@ -19,6 +19,7 @@ def extract_pdf_text(pdf_path: str) -> str:
     text = ""
     for page in doc:
         text += page.get_text()
+        print(text)
     return text.strip() if text else "No text found."
 
 def extract_text(path: str) -> str:

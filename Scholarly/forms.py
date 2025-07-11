@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, FileField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, FileField, SelectField, TextAreaField
 from flask_wtf.file import FileAllowed
-from wtforms.validators import DataRequired, length,EqualTo, ValidationError, Email
+from wtforms.validators import DataRequired, length, EqualTo, ValidationError, Email
 from Scholarly.models import User
 
 class RegistrationForm(FlaskForm):
@@ -36,13 +36,8 @@ class AccountForm(FlaskForm):
 
 class CreateNoteForm(FlaskForm):
     title = StringField("Title", validators=[DataRequired()])
-    content = StringField("Content", validators=[DataRequired()])
+    content = TextAreaField("Content", validators=[DataRequired()])
     submit = SubmitField("Create")
-
-from flask_wtf import FlaskForm
-from wtforms import SelectField, SubmitField
-from flask_wtf.file import FileField, FileAllowed
-from wtforms.validators import DataRequired
 
 class CreateAINotes(FlaskForm):
     title = StringField("Title", validators=[DataRequired()])
