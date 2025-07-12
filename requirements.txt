@@ -4,11 +4,15 @@ Flask-Login
 Flask-WTF
 Flask-Bcrypt
 email-validator
+protobuf
+sentencepiece
 WTForms
 PyMuPDF
 easyocr
-transformers
+transformers[torch]
 datasets
 huggingface_hub
 Pillow
 gunicorn
+accelerate>=0.26.0
+python-dotenv

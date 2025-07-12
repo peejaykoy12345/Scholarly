@@ -4,6 +4,9 @@ __pycache__/
 *$py.class
 .vscode/
 instance/
+AI/quiz_gen/models/
+**/models/
+models/
 
 # C extensions
 *.so

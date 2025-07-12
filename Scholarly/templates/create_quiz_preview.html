@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block title %}Preview Quiz{% endblock %}
+{% block content %}
+<div class="card p-4 shadow-sm">
+  <h2 class="mb-3">🧠 Preview Generated Quiz</h2>
+
+  {% for item in questions.output %}
+  <div class="mb-4">
+    <h5><strong>Q{{ loop.index }}:</strong> {{ item.question }}</h5>
+    <ul>
+      {% for choice in item.choices %}
+      <li{% if loop.index0 == item.answer_index %} class="text-success fw-bold"{% endif %}>
+        {{ choice }}
+        {% if loop.index0 == item.answer_index %} ✅ {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endfor %}
+
+  <form method="POST">
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+{% endblock %}

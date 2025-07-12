@@ -51,3 +51,8 @@ class CreateAINotes(FlaskForm):
         validators=[FileAllowed(['jpg', 'jpeg', 'png', 'pdf'], 'Images or PDFs only!')]
     )
     submit = SubmitField("Create notes")
+
+class CreateQuizForm(FlaskForm):
+    note = SelectField('Select Note', coerce=int, validators=[DataRequired()])
+    model = SelectField('Select Model', choices=[('Groq', 'Groq')], validators=[DataRequired()])
+    submit = SubmitField('Generate')

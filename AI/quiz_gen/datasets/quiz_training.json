@@ -1,0 +1,612 @@
+[
+    {
+        "input": "Photosynthesis is the process by which plants use sunlight, carbon dioxide, and water to produce glucose (food) and oxygen. It occurs in the chloroplasts of plant cells.",
+        "output": [
+            {
+                "question": "What is the main function of photosynthesis?",
+                "choices": ["To absorb water", "To produce food", "To grow leaves", "To make oxygen"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The capital of France is Paris, a city known for its art, fashion, and landmarks like the Eiffel Tower and Louvre Museum.",
+        "output": [
+            {
+                "question": "What is the capital of France?",
+                "choices": ["Berlin", "Madrid", "Paris", "Rome"],
+                "answer_index": 2
+            }
+        ]
+    },
+    {
+        "input": "Mars is called the Red Planet due to iron oxide (rust) on its surface. It has the largest volcano in the solar system, Olympus Mons.",
+        "output": [
+            {
+                "question": "Why is Mars called the Red Planet?",
+                "choices": ["Due to its hot temperature", "Because of iron oxide on its surface", "From reflected sunlight", "Because it's near the Sun"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The human heart has four chambers: two atria and two ventricles. It pumps blood through the circulatory system.",
+        "output": [
+            {
+                "question": "How many chambers does the human heart have?",
+                "choices": ["Two", "Three", "Four", "Five"],
+                "answer_index": 2
+            }
+        ]
+    },
+    {
+        "input": "Shakespeare wrote 37 plays, including tragedies like Hamlet, comedies like A Midsummer Night's Dream, and histories like Henry V.",
+        "output": [
+            {
+                "question": "How many plays did Shakespeare write?",
+                "choices": ["25", "37", "42", "50"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "Water boils at 100°C (212°F) at sea level. This temperature decreases at higher altitudes due to lower atmospheric pressure.",
+        "output": [
+            {
+                "question": "At what temperature does water boil at sea level?",
+                "choices": ["90°C", "100°C", "110°C", "120°C"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The Great Wall of China stretches approximately 21,196 km. It was built over centuries to protect Chinese states from invasions.",
+        "output": [
+            {
+                "question": "Why was the Great Wall of China built?",
+                "choices": ["As a trade route", "For religious purposes", "To prevent invasions", "To mark territory"],
+                "answer_index": 2
+            }
+        ]
+    },
+    {
+        "input": "Einstein's theory of relativity revolutionized physics by describing gravity as the curvature of spacetime caused by mass and energy.",
+        "output": [
+            {
+                "question": "What did Einstein's theory of relativity describe gravity as?",
+                "choices": ["A pulling force", "Curvature of spacetime", "Magnetic attraction", "Quantum fluctuation"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The Nile River is the longest river in the world at 6,650 km. It flows through 11 African countries including Egypt and Sudan.",
+        "output": [
+            {
+                "question": "Which is the world's longest river?",
+                "choices": ["Amazon", "Yangtze", "Nile", "Mississippi"],
+                "answer_index": 2
+            }
+        ]
+    },
+    {
+        "input": "The Industrial Revolution began in Britain in the late 18th century, marked by the transition to new manufacturing processes.",
+        "output": [
+            {
+                "question": "Where did the Industrial Revolution begin?",
+                "choices": ["France", "United States", "Britain", "Germany"],
+                "answer_index": 2
+            }
+        ]
+    },
+    {
+        "input": "DNA contains the genetic instructions for all known living organisms. Its double helix structure was discovered by Watson and Crick.",
+        "output": [
+            {
+                "question": "What is the shape of DNA?",
+                "choices": ["Single spiral", "Double helix", "Triple strand", "Flat ladder"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The Pacific Ocean is the largest and deepest ocean, covering about 30% of Earth's surface and containing the Mariana Trench.",
+        "output": [
+            {
+                "question": "Which is the largest ocean?",
+                "choices": ["Atlantic", "Indian", "Arctic", "Pacific"],
+                "answer_index": 3
+            }
+        ]
+    },
+    {
+        "input": "The Renaissance was a cultural movement in Europe from the 14th to 17th centuries that revived classical learning and wisdom.",
+        "output": [
+            {
+                "question": "What did the Renaissance revive?",
+                "choices": ["Medieval traditions", "Classical learning", "Religious doctrines", "Tribal customs"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The periodic table organizes chemical elements by increasing atomic number. Elements in the same column share similar properties.",
+        "output": [
+            {
+                "question": "How are elements organized in the periodic table?",
+                "choices": ["By atomic mass", "By atomic number", "By discovery date", "By color"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The Wright brothers, Orville and Wilbur, made the first successful powered airplane flight in 1903 at Kitty Hawk, North Carolina.",
+        "output": [
+            {
+                "question": "Who made the first powered airplane flight?",
+                "choices": ["Einstein brothers", "Wright brothers", "Montgolfier brothers", "Marx brothers"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The human skeleton consists of 206 bones in adults. The smallest bone is the stapes in the ear, and the longest is the femur.",
+        "output": [
+            {
+                "question": "How many bones are in the adult human body?",
+                "choices": ["150", "187", "206", "225"],
+                "answer_index": 2
+            }
+        ]
+    },
+    {
+        "input": "The Statue of Liberty was a gift from France to the United States in 1886. It symbolizes freedom and democracy.",
+        "output": [
+            {
+                "question": "What does the Statue of Liberty symbolize?",
+                "choices": ["Friendship", "Wealth", "Freedom", "Peace"],
+                "answer_index": 2
+            }
+        ]
+    },
+    {
+        "input": "The speed of light in a vacuum is approximately 299,792 kilometers per second. Nothing can travel faster than this speed.",
+        "output": [
+            {
+                "question": "What is the speed of light in a vacuum?",
+                "choices": ["150,000 km/s", "225,000 km/s", "299,792 km/s", "350,000 km/s"],
+                "answer_index": 2
+            }
+        ]
+    },
+    {
+        "input": "The Roman Empire was centered around Rome and at its height controlled territory from Britain to the Middle East.",
+        "output": [
+            {
+                "question": "What city was the center of the Roman Empire?",
+                "choices": ["Athens", "Carthage", "Rome", "Constantinople"],
+                "answer_index": 2
+            }
+        ]
+    },
+    {
+        "input": "Mitochondria are organelles that generate most of the cell's supply of ATP, used as a source of chemical energy.",
+        "output": [
+            {
+                "question": "What do mitochondria produce?",
+                "choices": ["DNA", "Proteins", "ATP energy", "Hormones"],
+                "answer_index": 2
+            }
+        ]
+    },
+    {
+        "input": "The Magna Carta was signed in 1215 in England, limiting the king's power and establishing the principle that everyone is subject to the law.",
+        "output": [
+            {
+                "question": "What did the Magna Carta establish?",
+                "choices": ["Absolute monarchy", "That everyone is subject to law", "Religious supremacy", "Feudal privileges"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The brain is divided into three main parts: cerebrum, cerebellum, and brainstem. The cerebrum controls voluntary actions.",
+        "output": [
+            {
+                "question": "Which part of the brain controls voluntary actions?",
+                "choices": ["Cerebellum", "Brainstem", "Cerebrum", "Spinal cord"],
+                "answer_index": 2
+            }
+        ]
+    },
+    {
+        "input": "The Taj Mahal in India was built by Mughal emperor Shah Jahan as a mausoleum for his wife Mumtaz Mahal.",
+        "output": [
+            {
+                "question": "Why was the Taj Mahal built?",
+                "choices": ["As a palace", "As a mausoleum", "As a temple", "As a fortress"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "Newton's First Law states that an object in motion stays in motion unless acted upon by an external force. This is called inertia.",
+        "output": [
+            {
+                "question": "What is Newton's First Law also called?",
+                "choices": ["Law of Gravity", "Law of Inertia", "Law of Motion", "Law of Force"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The Amazon River is the second longest river in the world but discharges more water than any other river.",
+        "output": [
+            {
+                "question": "What is special about the Amazon River?",
+                "choices": ["It's the longest", "It's the widest", "It discharges most water", "It's the coldest"],
+                "answer_index": 2
+            }
+        ]
+    },
+    {
+        "input": "The Declaration of Independence was adopted by the Continental Congress on July 4, 1776, announcing the separation of American colonies from Britain.",
+        "output": [
+            {
+                "question": "What did the Declaration of Independence announce?",
+                "choices": ["End of slavery", "American colonies' separation from Britain", "Formation of United Nations", "New tax laws"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The liver is the largest internal organ and performs over 500 functions including detoxification and protein synthesis.",
+        "output": [
+            {
+                "question": "What is the largest internal organ?",
+                "choices": ["Heart", "Brain", "Liver", "Lungs"],
+                "answer_index": 2
+            }
+        ]
+    },
+    {
+        "input": "The Eiffel Tower was built for the 1889 Paris Exposition and was initially criticized by many Parisians.",
+        "output": [
+            {
+                "question": "Why was the Eiffel Tower built?",
+                "choices": ["As a radio tower", "For the 1889 Paris Exposition", "As a war memorial", "For royal ceremonies"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The Big Bang theory states that the universe began as a hot, dense point about 13.8 billion years ago and has been expanding ever since.",
+        "output": [
+            {
+                "question": "What does the Big Bang theory explain?",
+                "choices": ["Origin of life", "Formation of Earth", "Beginning of universe", "Evolution of species"],
+                "answer_index": 2
+            }
+        ]
+    },
+    {
+        "input": "The Great Pyramid of Giza is the oldest of the Seven Wonders of the Ancient World and was built as a tomb for Pharaoh Khufu.",
+        "output": [
+            {
+                "question": "Why was the Great Pyramid built?",
+                "choices": ["As a temple", "As an observatory", "As a tomb", "As a fortress"],
+                "answer_index": 2
+            }
+        ]
+    },
+    {
+        "input": "The United Nations was founded in 1945 after World War II to promote international cooperation and prevent future conflicts.",
+        "output": [
+            {
+                "question": "Why was the United Nations founded?",
+                "choices": ["To regulate trade", "To promote international cooperation", "To create a world government", "To manage natural resources"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The kidneys filter blood to remove waste and excess water, which becomes urine. Humans typically have two kidneys.",
+        "output": [
+            {
+                "question": "What do kidneys filter from blood?",
+                "choices": ["Oxygen", "Waste and excess water", "Nutrients", "Hormones"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The Colosseum in Rome could hold 50,000-80,000 spectators and was used for gladiatorial contests and public spectacles.",
+        "output": [
+            {
+                "question": "What was the Colosseum used for?",
+                "choices": ["Religious ceremonies", "Gladiatorial contests", "Royal coronations", "Market trading"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The Moon is Earth's only natural satellite. It takes about 27 days to orbit Earth and causes ocean tides.",
+        "output": [
+            {
+                "question": "What does the Moon cause on Earth?",
+                "choices": ["Earthquakes", "Ocean tides", "Volcanic eruptions", "Seasonal changes"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The printing press was invented by Johannes Gutenberg around 1440, revolutionizing the spread of information in Europe.",
+        "output": [
+            {
+                "question": "Who invented the printing press?",
+                "choices": ["Leonardo da Vinci", "Johannes Gutenberg", "Isaac Newton", "Galileo Galilei"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The lungs are the primary organs of respiration, exchanging oxygen and carbon dioxide between the body and the environment.",
+        "output": [
+            {
+                "question": "What do lungs primarily exchange?",
+                "choices": ["Nutrients and waste", "Oxygen and carbon dioxide", "Hormones and enzymes", "Blood and lymph"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The Leaning Tower of Pisa leans because of unstable foundation soil. Construction took nearly 200 years (1173-1372).",
+        "output": [
+            {
+                "question": "Why does the Leaning Tower of Pisa lean?",
+                "choices": ["Earthquakes", "Unstable foundation soil", "Design choice", "War damage"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "Electricity is the flow of electric charge, typically carried by electrons moving through a conductor like copper wire.",
+        "output": [
+            {
+                "question": "What is electricity?",
+                "choices": ["Flow of water", "Flow of air", "Flow of electric charge", "Flow of heat"],
+                "answer_index": 2
+            }
+        ]
+    },
+    {
+        "input": "The Great Barrier Reef off Australia is the world's largest coral reef system, visible from space and home to diverse marine life.",
+        "output": [
+            {
+                "question": "Where is the Great Barrier Reef located?",
+                "choices": ["Caribbean", "Australia", "Southeast Asia", "Africa"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The French Revolution (1789-1799) overthrew the monarchy and established principles of liberty, equality, and fraternity.",
+        "output": [
+            {
+                "question": "What did the French Revolution establish?",
+                "choices": ["Absolute monarchy", "Principles of liberty and equality", "Religious rule", "Feudal system"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The pancreas produces insulin to regulate blood sugar levels. Diabetes occurs when this system malfunctions.",
+        "output": [
+            {
+                "question": "What does the pancreas produce to regulate blood sugar?",
+                "choices": ["Adrenaline", "Insulin", "Hemoglobin", "Melanin"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "Mount Everest was first summited by Edmund Hillary and Tenzing Norgay in 1953. It's part of the Himalayan range.",
+        "output": [
+            {
+                "question": "Who first summited Mount Everest?",
+                "choices": ["Columbus and Magellan", "Hillary and Norgay", "Lewis and Clark", "Amundsen and Scott"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "Sound travels faster in water (about 1,480 m/s) than in air (343 m/s) because water molecules are packed more densely.",
+        "output": [
+            {
+                "question": "Where does sound travel faster?",
+                "choices": ["Air", "Water", "Vacuum", "Steel"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The Sahara is the world's largest hot desert, covering most of North Africa. Temperatures can exceed 50°C (122°F).",
+        "output": [
+            {
+                "question": "What is the world's largest hot desert?",
+                "choices": ["Gobi", "Sahara", "Arabian", "Kalahari"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The American Civil War (1861-1865) was fought between the Union (North) and Confederacy (South) primarily over slavery and states' rights.",
+        "output": [
+            {
+                "question": "What was the American Civil War primarily about?",
+                "choices": ["Taxation", "Slavery and states' rights", "Land expansion", "Religious freedom"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The skin is the body's largest organ, providing protection, regulating temperature, and enabling touch sensations.",
+        "output": [
+            {
+                "question": "What is the body's largest organ?",
+                "choices": ["Liver", "Brain", "Skin", "Heart"],
+                "answer_index": 2
+            }
+        ]
+    },
+    {
+        "input": "Venice, Italy is built on 118 small islands connected by canals and bridges. It's famous for its gondolas and Carnival.",
+        "output": [
+            {
+                "question": "What is Venice famous for?",
+                "choices": ["Skyscrapers", "Canals and gondolas", "Volcanoes", "Desert landscapes"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "Magnetism is a force that can attract or repel objects with magnetic materials like iron, nickel, and cobalt.",
+        "output": [
+            {
+                "question": "What can magnetism do?",
+                "choices": ["Attract/repel magnetic materials", "Create light", "Generate sound", "Produce heat"],
+                "answer_index": 0
+            }
+        ]
+    },
+    {
+        "input": "The Galápagos Islands inspired Charles Darwin's theory of evolution. They're known for unique species like giant tortoises.",
+        "output": [
+            {
+                "question": "What did the Galápagos Islands inspire?",
+                "choices": ["Theory of relativity", "Theory of evolution", "Quantum theory", "Plate tectonics"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "World War I (1914-1918) began after the assassination of Archduke Franz Ferdinand and involved the Allied and Central Powers.",
+        "output": [
+            {
+                "question": "What event triggered World War I?",
+                "choices": ["Pearl Harbor attack", "Franz Ferdinand's assassination", "Russian Revolution", "Treaty signing"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The stomach uses gastric acid and enzymes to break down food. It can expand to hold about 1 liter of food and liquid.",
+        "output": [
+            {
+                "question": "What does the stomach use to break down food?",
+                "choices": ["Bile and hormones", "Gastric acid and enzymes", "Saliva and mucus", "Blood and plasma"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The Kremlin in Moscow is a historic fortress that serves as the official residence of Russia's president.",
+        "output": [
+            {
+                "question": "What is the Kremlin?",
+                "choices": ["A church", "President's residence", "University", "Shopping mall"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "Gravity is the force that attracts objects with mass toward each other. On Earth, it gives objects weight.",
+        "output": [
+            {
+                "question": "What does gravity give objects on Earth?",
+                "choices": ["Color", "Weight", "Sound", "Electric charge"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The Panama Canal connects the Atlantic and Pacific Oceans, saving ships from traveling around South America.",
+        "output": [
+            {
+                "question": "What does the Panama Canal connect?",
+                "choices": ["Mediterranean and Red Seas", "Atlantic and Pacific Oceans", "Indian Ocean and Bay of Bengal", "Arctic and Southern Oceans"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The Cold War (1947-1991) was a period of geopolitical tension between the United States and Soviet Union without direct major fighting.",
+        "output": [
+            {
+                "question": "Who were the main opponents in the Cold War?",
+                "choices": ["US and China", "US and Soviet Union", "Britain and France", "Germany and Japan"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "Bones are made mostly of collagen and calcium phosphate. They produce blood cells in their marrow.",
+        "output": [
+            {
+                "question": "What do bones produce in their marrow?",
+                "choices": ["Hormones", "Blood cells", "Enzymes", "Bile"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "Stonehenge in England is a prehistoric monument of standing stones erected around 2500 BCE, possibly for astronomical purposes.",
+        "output": [
+            {
+                "question": "What is Stonehenge?",
+                "choices": ["Ancient temple", "Prehistoric stone monument", "Roman fortress", "Medieval castle"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "Friction is a force that opposes motion between surfaces in contact. It causes wear but also enables walking and gripping.",
+        "output": [
+            {
+                "question": "What does friction do?",
+                "choices": ["Opposes motion", "Creates energy", "Reduces weight", "Generates light"],
+                "answer_index": 0
+            }
+        ]
+    },
+    {
+        "input": "The Serengeti in Africa hosts the largest mammal migration, with over 1 million wildebeest and zebras moving annually.",
+        "output": [
+            {
+                "question": "Where does the largest mammal migration occur?",
+                "choices": ["Amazon", "Serengeti", "Siberia", "Australian Outback"],
+                "answer_index": 1
+            }
+        ]
+    },
+    {
+        "input": "The Renaissance began in Italy in the 14th century, marking a revival of classical art, literature, and learning.",
+        "output": [
+            {
+                "question": "Where did the Renaissance begin?",
+                "choices": ["France", "England", "Italy", "Spain"],
+                "answer_index": 2
+            }
+        ]
+    },
+    {
+        "input": "Muscles contract and relax to produce movement. There are three types: skeletal, smooth, and cardiac.",
+        "output": [
+            {
+                "question": "How many types of muscles are there?",
+                "choices": ["Two", "Three", "Four", "Five"],
+                "answer_index": 1
+            }
+        ]
+    }
+]

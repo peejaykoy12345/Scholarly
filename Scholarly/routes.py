@@ -2,12 +2,14 @@ import secrets, os
 from flask import render_template, flash, redirect, request, url_for, session, abort
 from flask_login import current_user, login_required, logout_user, login_user
 from Scholarly import app, db, bcrypt
-from Scholarly.models import User, Notes
-from Scholarly.forms import LoginForm, RegistrationForm, AccountForm, CreateNoteForm, CreateAINotes
+from Scholarly.models import User, Notes, Quiz
+from Scholarly.forms import LoginForm, RegistrationForm, AccountForm, CreateNoteForm, CreateAINotes, CreateQuizForm
 from PIL import Image
 from werkzeug.utils import secure_filename
 from AI.text_extracter import extract_text
 from AI.summarize import summarize_text
+from AI.quiz_gen.quiz_gen_groq import generate_questions as generate_questions_using_groq
+from json import dumps
 
 @app.route('/')
 @app.route('/home')
@@ -121,15 +123,45 @@ def notes():
     notes = Notes.query.filter_by(owner_id=current_user.id).order_by(Notes.date_created.desc()).paginate(page=page, per_page=10)
     return render_template('notes.html', notes=notes)
 
-@app.route('/quizzes')
+@app.route('/quizzes', methods=["GET", "POST"])
 @login_required
 def quizzes():
-    pass
+    form = CreateQuizForm()
+    notes = Notes.query.filter_by(owner_id=current_user.id).all()
+    quizzes =  Quiz.query.filter_by(owner_id=current_user.id).all()
+    
+    form.note.choices = [(note.id, note.title) for note in notes]
 
-@app.route('/create_quiz/<int:note_id>')
+    if form.validate_on_submit():
+        note_id = form.note.data
+        model = form.model.data
+        if model == 'Groq':
+            return redirect(url_for('create_quiz', note_id=note_id))
+        else:
+            flash("Unsupported model selected", "danger")
+
+    return render_template("quizzes.html", form=form, notes=notes, quizzes=quizzes)
+
+@app.route('/create_quiz/<int:note_id>', methods=['GET', 'POST'])
 @login_required
 def create_quiz(note_id):
-    note = Notes.get_or_404(note_id)
-    if not note:
+    note = Notes.query.get_or_404(note_id)
+    if not note or note.author != current_user:
         abort(403)
+    questions = generate_questions_using_groq(note.content)
+    if isinstance(questions, dict) and "error" in questions:
+        flash(questions["error"], "danger")
+        return redirect(url_for("notes"))
+    if request.method == 'POST':
+        quiz = Quiz(
+            owner_id=current_user.id,
+            note_id=note.id,
+            title=note.title,
+            questions_json=dumps(questions),
+        )
+        db.session.add(quiz)
+        db.session.commit()
+        return redirect(url_for('quizzes'))
+    return render_template('create_quiz_preview.html', questions=questions)
+
     
