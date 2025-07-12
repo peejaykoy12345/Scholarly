@@ -30,6 +30,7 @@ class Quiz(db.Model):
     title = db.Column(db.String(), nullable=False)
     model_used = db.Column(db.String(50), nullable=False, default='Groq')
     questions_json = db.Column(db.Text(), nullable=False)
+    results = db.relationship('QuizResult', backref='quiz', lazy=True)
     date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     def get_questions(self):
@@ -37,3 +38,16 @@ class Quiz(db.Model):
             return json.loads(self.questions_json)
         except json.JSONDecodeError:
             return []
+        
+class QuizResult(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    quiz_id = db.Column(db.Integer, db.ForeignKey('quiz.id'), nullable=False)
+    
+    question = db.Column(db.Text, nullable=False)
+    correct_answer = db.Column(db.String(255), nullable=False)
+    user_answer = db.Column(db.String(255), nullable=False)
+    explanation = db.Column(db.Text)
+    
+    is_correct = db.Column(db.Boolean, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)

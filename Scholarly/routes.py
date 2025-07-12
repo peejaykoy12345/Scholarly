@@ -2,7 +2,7 @@ import secrets, os
 from flask import render_template, flash, redirect, request, url_for, session, abort
 from flask_login import current_user, login_required, logout_user, login_user
 from Scholarly import app, db, bcrypt
-from Scholarly.models import User, Notes, Quiz
+from Scholarly.models import User, Notes, Quiz, QuizResult
 from Scholarly.forms import LoginForm, RegistrationForm, AccountForm, CreateNoteForm, CreateAINotes, CreateQuizForm
 from PIL import Image
 from werkzeug.utils import secure_filename
@@ -163,5 +163,49 @@ def create_quiz(note_id):
         db.session.commit()
         return redirect(url_for('quizzes'))
     return render_template('create_quiz_preview.html', questions=questions)
+
+@app.route('/view_quiz/<int:quiz_id>', methods=['GET', 'POST'])
+def view_quiz(quiz_id):
+    quiz = Quiz.query.get_or_404(quiz_id)
+    if not quiz or quiz.author != current_user:
+        abort(403)
+    
+    questions = quiz.get_questions()  
+    print(type(questions))  
+
+    if request.method == 'POST':
+        question_counter = 0
+        
+        for question in questions['output']:
+            form_key = f"answer_{question_counter}"
+            selected = request.form.get(form_key)
+            
+            selected_index = int(selected) if selected else -1
+            correct_index = question["answer_index"]
+            
+            result = QuizResult(
+                user_id=current_user.id,
+                quiz_id=quiz.id,
+                question=question["question"],
+                correct_answer=question["choices"][correct_index],
+                user_answer=question["choices"][selected_index] if 0 <= selected_index < len(question["choices"]) else "N/A",
+                explanation=question.get("explanation", "No explanation provided"),
+                is_correct=(selected_index == correct_index)
+            )
+            print(
+                f"User: {current_user.id}, "
+                f"Quiz: {quiz.id}, "
+                f"Q: {question['question']}, "
+                f"Correct: {question['choices'][correct_index]}, "
+                f"Selected: {question['choices'][selected_index] if 0 <= selected_index < len(question['choices']) else 'N/A'}, "
+                f"Correct?: {'✅' if selected_index == correct_index else '❌'}"
+            )
+            db.session.add(result)
+            question_counter += 1
+        
+        db.session.commit()
+        return redirect(url_for('quizzes'))
+    
+    return render_template('view_quiz.html', quiz=quiz, questions=questions)
 
     
