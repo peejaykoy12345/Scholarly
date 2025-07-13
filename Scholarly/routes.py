@@ -137,8 +137,8 @@ def view_notes(note_id):
 @login_required
 def quizzes():
     form = CreateQuizForm()
-    notes = Notes.query.filter_by(owner_id=current_user.id).all()
-    quizzes = Quiz.query.filter_by(owner_id=current_user.id).all()
+    notes = Notes.query.filter_by(owner_id=current_user.id).order_by(Notes.date_created.desc()).all()
+    quizzes = Quiz.query.filter_by(owner_id=current_user.id).order_by(Quiz.date_created.desc()).all()
     form.note.choices = [(note.id, note.title) for note in notes]
 
     if request.method == "POST" and request.form.get("confirm_quiz"):
