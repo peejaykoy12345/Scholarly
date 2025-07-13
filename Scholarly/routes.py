@@ -123,6 +123,16 @@ def notes():
     notes = Notes.query.filter_by(owner_id=current_user.id).order_by(Notes.date_created.desc()).paginate(page=page, per_page=10)
     return render_template('notes.html', notes=notes)
 
+@app.route('/view_notes/<int:note_id>')
+@login_required
+def view_notes(note_id):
+    note = Notes.query.get_or_404(note_id)
+    
+    if note.owner_id != current_user.id:
+        abort(403)
+
+    return render_template('view_notes.html', note=note)
+
 @app.route('/quizzes', methods=["GET", "POST"])
 @login_required
 def quizzes():

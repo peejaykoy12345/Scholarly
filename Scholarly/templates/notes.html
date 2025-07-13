@@ -26,7 +26,8 @@
       {% for note in notes.items %}
         <div class="list-group-item mb-2 shadow-sm rounded">
           <small class="text-muted float-end">{{ note.date_created.strftime('%Y-%m-%d %H:%M') }}</small>
-          <p class="mb-1">{{ note.content }}</p>
+          <p class="mb-1">{{ note.title }}</p>
+          <a href="{{ url_for('view_notes', note_id=note.id) }}" class="btn btn-sm btn-primary mt-2">View</a>
         </div>
       {% endfor %}
     </div>
