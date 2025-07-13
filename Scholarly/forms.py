@@ -55,6 +55,6 @@ class CreateAINotes(FlaskForm):
 class CreateQuizForm(FlaskForm):
     note = SelectField('Select Note', coerce=int, validators=[DataRequired()])
     model = SelectField('Select Model', choices=[('Groq', 'Groq')], validators=[DataRequired()])
-    quiz_type = SelectField('Select quiz type', choices=[('Multiple Choice', 'MultipleChoice')], validators=[DataRequired()])
+    quiz_type = SelectField('Select quiz type', choices=[('Multiple Choice', 'Multiple Choice'), ('Situational', 'Situational')], validators=[DataRequired()])
     question_count = IntegerField('Input how many questions you want', validators=[DataRequired(), NumberRange(min=1, max=30)])
     submit = SubmitField('Generate')

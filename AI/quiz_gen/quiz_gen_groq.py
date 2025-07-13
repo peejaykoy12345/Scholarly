@@ -16,30 +16,37 @@ def generate_questions(input: str, quiz_type: str, question_count: int):
     assert quiz_type.lower() in ["multiple choice", "situational"], "Invalid quiz_type"
 
     system_prompt = f"""
-    You are an AI that generates quizzes based on provided content. Your task is to create {question_count} {quiz_type.lower()} questions from the input text.
+        You are an AI that generates quizzes based on provided content. Your task is to create {question_count} {quiz_type.lower()} questions from the input text.
 
-    ⚠️ Respond ONLY in the following pure JSON format (no markdown, no explanations, no extra text):
+        ⚠️ Respond ONLY in the following pure JSON format (no markdown, no explanations, no extra text):
 
-    {{
-      "input": "<original input text here>",
-      "output": [
         {{
-          "question": "What is the capital of France?",
-          "choices": ["Berlin", "Madrid", "Paris", "Rome"],
-          "answer_index": 2
-        }},
-        ...
-      ]
-    }}
+        "input": "<original input text here>",
+        "output": [
+            {{
+            "question": "What is the capital of France?",
+            "choices": ["Berlin", "Madrid", "Paris", "Rome"],
+            "answer_index": 2
+            }},
+            ...
+        ]
+        }}
 
-    📝 Notes:
-    - The number of items in "output" must exactly be {question_count}.
-    - The "choices" list must always have exactly 4 unique options.
-    - Only one choice should be correct (indicated by "answer_index").
-    - Do NOT include explanations or non-JSON content.
+        📝 Notes:
+        - The number of items in "output" must exactly be {question_count}.
+        - The "choices" list must always have exactly 4 unique options.
+        - Only one choice should be correct (indicated by "answer_index").
+        - Do NOT include explanations or non-JSON content.
+        - DO NOT ADD ``` OR ANY SPECIAL CHARACTERS JUST PLAIN WORDS LIKE STRINGS
 
-    Start generating based on the input.
+        📘 Special Instructions:
+        If quiz_type is "situational":
+        - Frame each question as a realistic or practical scenario where the user must make a decision or judgment.
+        - Use real-life contexts such as daily decisions, ethical dilemmas, school/work situations, etc.
+        - The situation must be clearly described, and the question should test critical thinking or understanding of the scenario.
+        - Keep it concise but meaningful.
     """
+
 
     data = {
         "model": "meta-llama/llama-4-scout-17b-16e-instruct",
