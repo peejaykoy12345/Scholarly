@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block title %}Results for {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Quiz Results for "{{ quiz.title }}"</h2>
+
+  {% if results|length == 0 %}
+    <div class="alert alert-info">No results yet.</div>
+  {% else %}
+    <div class="list-group">
+      {% for result in results %}
+        <div class="list-group-item">
+          <p><strong>Question:</strong> {{ result.question }}</p>
+          <p><strong>Your Answer:</strong> {{ result.user_answer }}</p>
+          <p><strong>Correct Answer:</strong> {{ result.correct_answer }}</p>
+          <p><strong>Correct?</strong> {{ '✅' if result.is_correct else '❌' }}</p>
+          {% if result.explanation %}
+            <p><strong>Explanation:</strong> {{ result.explanation }}</p>
+          {% endif %}
+          <small class="text-muted">{{ result.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

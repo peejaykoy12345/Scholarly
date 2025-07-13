@@ -229,6 +229,7 @@ def view_quiz(quiz_id):
     print(questions, "is questions")
 
     if request.method == 'POST':
+        QuizResult.query.filter_by(quiz_id=quiz_id).delete()
         question_counter = 0
         
         for question in questions:
@@ -263,4 +264,11 @@ def view_quiz(quiz_id):
     
     return render_template('view_quiz.html', quiz=quiz, questions=questions)
 
+@app.route('/view_results/<int:quiz_id>')
+@login_required
+def view_results(quiz_id):
+    quiz = Quiz.query.get_or_404(quiz_id)
+    if quiz.owner_id != current_user.id:
+        abort(403)
+    return render_template('view_results.html', results=quiz.results, quiz=quiz)
     

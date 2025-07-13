@@ -14,6 +14,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(60), nullable=False)
     notes = db.relationship('Notes', backref='author', lazy=True)
     quizzes = db.relationship('Quiz', backref='author', lazy=True)
+    quiz_results = db.relationship('QuizResult', backref='user', lazy=True)
 
 class Notes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
