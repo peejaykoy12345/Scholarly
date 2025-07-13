@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, FileField, SelectField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, FileField, SelectField, TextAreaField, IntegerField
 from flask_wtf.file import FileAllowed
-from wtforms.validators import DataRequired, length, EqualTo, ValidationError, Email
+from wtforms.validators import DataRequired, length, EqualTo, ValidationError, Email, NumberRange
 from Scholarly.models import User
 
 class RegistrationForm(FlaskForm):
@@ -55,4 +55,6 @@ class CreateAINotes(FlaskForm):
 class CreateQuizForm(FlaskForm):
     note = SelectField('Select Note', coerce=int, validators=[DataRequired()])
     model = SelectField('Select Model', choices=[('Groq', 'Groq')], validators=[DataRequired()])
+    quiz_type = SelectField('Select quiz type', choices=[('Multiple Choice', 'MultipleChoice')], validators=[DataRequired()])
+    question_count = IntegerField('Input how many questions you want', validators=[DataRequired(), NumberRange(min=1, max=30)])
     submit = SubmitField('Generate')

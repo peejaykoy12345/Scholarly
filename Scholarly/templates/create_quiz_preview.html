@@ -1,25 +1,25 @@
 {% extends "layout.html" %}
-{% block title %}Preview Quiz{% endblock %}
 {% block content %}
-<div class="card p-4 shadow-sm">
-  <h2 class="mb-3">🧠 Preview Generated Quiz</h2>
+<div class="container mt-4">
+  <h3>Preview Quiz: {{ note.title }}</h3>
 
-  {% for item in questions.output %}
-  <div class="mb-4">
-    <h5><strong>Q{{ loop.index }}:</strong> {{ item.question }}</h5>
-    <ul>
-      {% for choice in item.choices %}
-      <li{% if loop.index0 == item.answer_index %} class="text-success fw-bold"{% endif %}>
-        {{ choice }}
-        {% if loop.index0 == item.answer_index %} ✅ {% endif %}
-      </li>
+  {% if questions %}
+    <form method="POST">
+      {% for q in questions %}
+        <div class="mb-4">
+          <strong>Q{{ loop.index }}:</strong> {{ q.question or '[Missing Question]' }}<br>
+          <ul>
+            {% for choice in q.choices %}
+              <li>{{ choice or '[Missing Choice]' }}</li>
+            {% endfor %}
+          </ul>
+        </div>
       {% endfor %}
-    </ul>
-  </div>
-  {% endfor %}
-
-  <form method="POST">
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
+      <button class="btn btn-success" type="submit" name="confirm_quiz" value="1">Save Quiz</button>
+      <a href="{{ url_for('quizzes') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+  {% else %}
+    <div class="alert alert-warning">No questions to preview. Please try again.</div>
+  {% endif %}
 </div>
 {% endblock %}

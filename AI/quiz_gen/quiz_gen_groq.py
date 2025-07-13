@@ -12,25 +12,35 @@ headers = {
     "Content-Type": "application/json"
 }
 
-system_prompt = """
-You are a quiz-generating AI. Given a fact, generate a multiple choice question about it.
-Respond only in the following JSON format:
+def generate_questions(input: str, quiz_type: str, question_count: int):
+    assert quiz_type.lower() in ["multiple choice", "situational"], "Invalid quiz_type"
 
-{
-    "input": "<original input>",
-    "output": [
-        {
-            "question": "<generated question>",
-            "choices": ["<A>", "<B>", "<C>", "<D>"],
-            "answer_index": <index_of_correct_choice>
-        }
-    ]
-}
+    system_prompt = f"""
+    You are an AI that generates quizzes based on provided content. Your task is to create {question_count} {quiz_type.lower()} questions from the input text.
 
-Only return valid JSON. Do not add explanations.
-"""
+    ⚠️ Respond ONLY in the following pure JSON format (no markdown, no explanations, no extra text):
 
-def generate_questions(input: str):
+    {{
+      "input": "<original input text here>",
+      "output": [
+        {{
+          "question": "What is the capital of France?",
+          "choices": ["Berlin", "Madrid", "Paris", "Rome"],
+          "answer_index": 2
+        }},
+        ...
+      ]
+    }}
+
+    📝 Notes:
+    - The number of items in "output" must exactly be {question_count}.
+    - The "choices" list must always have exactly 4 unique options.
+    - Only one choice should be correct (indicated by "answer_index").
+    - Do NOT include explanations or non-JSON content.
+
+    Start generating based on the input.
+    """
+
     data = {
         "model": "meta-llama/llama-4-scout-17b-16e-instruct",
         "messages": [
@@ -38,15 +48,16 @@ def generate_questions(input: str):
             {"role": "user", "content": input}
         ],
         "temperature": 0.7,
-        "max_tokens": 512
+        "max_tokens": 4096
     }
+
     response = requests.post(url, headers=headers, json=data)
 
     try:
         content = response.json()['choices'][0]['message']['content']
         parsed = json.loads(content)
         print(parsed)
-        return parsed 
+        return parsed
 
     except KeyError:
         return {
@@ -57,7 +68,8 @@ def generate_questions(input: str):
     except json.JSONDecodeError:
         return {
             "error": "⚠️ Response was not valid JSON",
-            "response": content
+            "raw_output": content
         }
+
 
 #print(type(generate_questions("Cristiano Ronaldo is the top leading goal scorer")), f'\n content: \n {generate_questions("Cristiano Ronaldo is the top leading goal scorer")}')

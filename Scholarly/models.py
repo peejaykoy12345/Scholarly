@@ -29,6 +29,7 @@ class Quiz(db.Model):
     note_id = db.Column(db.Integer, db.ForeignKey('notes.id'), nullable=False)
     title = db.Column(db.String(), nullable=False)
     model_used = db.Column(db.String(50), nullable=False, default='Groq')
+    quiz_type = db.Column(db.String(20), nullable=False)
     questions_json = db.Column(db.Text(), nullable=False)
     results = db.relationship('QuizResult', backref='quiz', lazy=True)
     date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -38,6 +39,9 @@ class Quiz(db.Model):
             return json.loads(self.questions_json)
         except json.JSONDecodeError:
             return []
+        
+    def get_question_count(self):
+        return sum(len(group['output']) for group in self.get_questions())
         
 class QuizResult(db.Model):
     id = db.Column(db.Integer, primary_key=True)

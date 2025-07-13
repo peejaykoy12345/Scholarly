@@ -1,38 +1,31 @@
 {% extends "layout.html" %}
-
-{% block title %}
-  Take Quiz
-{% endblock %}
-
+{% block title %}Take Quiz{% endblock %}
 {% block content %}
 <div class="container mt-5">
   <h2 class="mb-4 text-center">{{ quiz.title }}</h2>
-
   <form method="POST">
     <div class="quiz-form bg-light p-4 rounded shadow-sm">
-      {% set question_counter = 0 %}
-      {% for question in questions.output %}
+      {% for question in questions %}
+        {% set q_idx = loop.index0 %}
         <div class="mb-4 p-3 border rounded">
-          <p class="fw-semibold">{{ question_counter + 1 }}. {{ question.question }}</p>
+          <p class="fw-semibold">{{ loop.index }}. {{ question.question }}</p>
           <div class="ms-3">
             {% for choice in question.choices %}
               <div class="form-check">
                 <input class="form-check-input"
-                      type="radio"
-                      name="answer_{{ question_counter }}"
-                      id="answer_{{ question_counter }}_{{ loop.index0 }}"
-                      value="{{ loop.index0 }}">
-                <label class="form-check-label" for="answer_{{ question_counter }}_{{ loop.index0 }}">
+                       type="radio"
+                       name="answer_{{ q_idx }}"
+                       id="answer_{{ q_idx }}_{{ loop.index0 }}"
+                       value="{{ loop.index0 }}">
+                <label class="form-check-label" for="answer_{{ q_idx }}_{{ loop.index0 }}">
                   {{ choice }}
                 </label>
               </div>
             {% endfor %}
           </div>
         </div>
-        {% set question_counter = question_counter + 1 %}
       {% endfor %}
     </div>
-
     <div class="text-center mt-4">
       <button type="submit" class="btn btn-primary px-4 py-2">Submit Quiz</button>
     </div>

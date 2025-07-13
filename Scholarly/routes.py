@@ -128,41 +128,79 @@ def notes():
 def quizzes():
     form = CreateQuizForm()
     notes = Notes.query.filter_by(owner_id=current_user.id).all()
-    quizzes =  Quiz.query.filter_by(owner_id=current_user.id).all()
-    
+    quizzes = Quiz.query.filter_by(owner_id=current_user.id).all()
     form.note.choices = [(note.id, note.title) for note in notes]
+
+    if request.method == "POST" and request.form.get("confirm_quiz"):
+        print("RANN")
+        try:
+            questions = session.get("quiz_questions")
+            note_id = session.get("quiz_note_id")
+
+            print(questions, " is questions from sesssion")
+
+            if not questions or not note_id:
+                flash("Session expired. Please generate the quiz again.", "danger")
+                return redirect(url_for("quizzes"))
+
+            note = Notes.query.get_or_404(note_id)
+
+            quiz = Quiz(
+                owner_id=current_user.id,
+                note_id=note.id,
+                title=note.title,
+                model_used="Groq",  
+                quiz_type="Multiple Choice",
+                questions_json=dumps({"output": questions})
+            )
+            db.session.add(quiz)
+            db.session.commit()
+
+            session.pop("quiz_questions", None)
+            session.pop("quiz_note_id", None)
+
+            flash("✅ Quiz created successfully!", "success")
+            return redirect(url_for('quizzes'))
+
+        except Exception as e:
+            flash(f"Something went wrong saving the quiz: {e}", "danger")
+            return redirect(url_for('quizzes'))
 
     if form.validate_on_submit():
         note_id = form.note.data
         model = form.model.data
-        if model == 'Groq':
-            return redirect(url_for('create_quiz', note_id=note_id))
-        else:
+        quiz_type = form.quiz_type.data
+        question_count = form.question_count.data
+
+        note = Notes.query.get_or_404(note_id)
+        if note.owner_id != current_user.id:
+            abort(403)
+
+        if model != "Groq":
             flash("Unsupported model selected", "danger")
+            return redirect(url_for("quizzes"))
+
+        questions = generate_questions_using_groq(note.content, quiz_type, question_count)
+
+        print(questions, 'is questions from form.validate_on_submit')
+
+        if isinstance(questions, dict) and "error" in questions:
+            flash(questions["error"], "danger")
+            return redirect(url_for("quizzes"))
+        
+        if isinstance(questions, dict) and "output" in questions:
+            questions = questions["output"]
+
+        print(questions, "is the formatted question")
+        
+        session["quiz_questions"] = questions
+        session["quiz_note_id"] = note.id
+
+        return render_template("create_quiz_preview.html", questions=questions, note=note)
 
     return render_template("quizzes.html", form=form, notes=notes, quizzes=quizzes)
 
-@app.route('/create_quiz/<int:note_id>', methods=['GET', 'POST'])
-@login_required
-def create_quiz(note_id):
-    note = Notes.query.get_or_404(note_id)
-    if not note or note.author != current_user:
-        abort(403)
-    questions = generate_questions_using_groq(note.content)
-    if isinstance(questions, dict) and "error" in questions:
-        flash(questions["error"], "danger")
-        return redirect(url_for("notes"))
-    if request.method == 'POST':
-        quiz = Quiz(
-            owner_id=current_user.id,
-            note_id=note.id,
-            title=note.title,
-            questions_json=dumps(questions),
-        )
-        db.session.add(quiz)
-        db.session.commit()
-        return redirect(url_for('quizzes'))
-    return render_template('create_quiz_preview.html', questions=questions)
+
 
 @app.route('/view_quiz/<int:quiz_id>', methods=['GET', 'POST'])
 def view_quiz(quiz_id):
@@ -170,13 +208,17 @@ def view_quiz(quiz_id):
     if not quiz or quiz.author != current_user:
         abort(403)
     
-    questions = quiz.get_questions()  
-    print(type(questions))  
+    questions_data = quiz.get_questions()
+    print(questions_data, " is question data")
+    questions = questions_data["output"] if isinstance(questions_data, dict) else questions_data
+    
+    print(type(questions), "is question type")
+    print(questions, "is questions")
 
     if request.method == 'POST':
         question_counter = 0
         
-        for question in questions['output']:
+        for question in questions:
             form_key = f"answer_{question_counter}"
             selected = request.form.get(form_key)
             
