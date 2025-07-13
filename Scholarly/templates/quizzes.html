@@ -10,14 +10,18 @@
     <h3 class="mb-4">Your Quizzes</h3>
     <div class="list-group mb-4">
       {% for quiz in quizzes %}
-        <div class="list-group-item">
-          {{ quiz.title }}
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            {{ quiz.title }}
+          </div>
+          <form method="POST" action="{{ url_for('delete_quiz', quiz_id=quiz.id) }}" onsubmit="return confirm('Are you sure you want to delete this quiz?');">
+            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+          </form>
         </div>
       {% endfor %}
     </div>
   {% endif %}
 
-  <!-- Create Button -->
   <div class="text-center">
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addQuizModal">
       Create Quiz
@@ -25,7 +29,6 @@
   </div>
 </div>
 
-<!-- Modal -->
 <div class="modal fade" id="addQuizModal" tabindex="-1" aria-labelledby="addQuizModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <form class="modal-content" method="POST" action="{{ url_for('quizzes') }}">

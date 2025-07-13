@@ -200,7 +200,20 @@ def quizzes():
 
     return render_template("quizzes.html", form=form, notes=notes, quizzes=quizzes)
 
+@app.route('/delete_quiz/<int:quiz_id>', methods=['POST'])
+@login_required
+def delete_quiz(quiz_id):
+    quiz = Quiz.query.get_or_404(quiz_id)
 
+    if quiz.owner_id != current_user.id:
+        print(quiz.ownenr_id, " | ", current_user.id)
+        abort(403)
+
+    QuizResult.query.filter_by(quiz_id=quiz.id).delete()
+    db.session.delete(quiz)
+    db.session.commit()
+    flash('✅ Quiz successfully deleted!', 'success')
+    return redirect(url_for('quizzes'))
 
 @app.route('/view_quiz/<int:quiz_id>', methods=['GET', 'POST'])
 def view_quiz(quiz_id):
