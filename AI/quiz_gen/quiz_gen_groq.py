@@ -78,5 +78,29 @@ def generate_questions(input: str, quiz_type: str, question_count: int):
             "raw_output": content
         }
 
+def split_text(text: str, chunk_size: int = 1000):
+    return [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
+
+def generate_questions_but_with_long_text(text: str, quiz_type: str, question_count: int):
+    chunks = split_text(text)
+    total_chunks = len(chunks)
+    questions_count_per_chunk = question_count // total_chunks
+    remainder = question_count % total_chunks
+
+    all_questions = []
+
+    for index, chunk in enumerate(chunks):
+        q_count = questions_count_per_chunk + (1 if index < remainder else 0)
+
+        result = generate_questions(chunk, quiz_type, q_count)
+        if "output" in result:
+            all_questions.extend(result["output"])
+        else:
+            print("Error:", result["error"])
+
+    return {
+        "input": text,
+        "output": all_questions[:question_count]
+    }
 
 #print(type(generate_questions("Cristiano Ronaldo is the top leading goal scorer")), f'\n content: \n {generate_questions("Cristiano Ronaldo is the top leading goal scorer")}')

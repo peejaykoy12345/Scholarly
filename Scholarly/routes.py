@@ -8,7 +8,7 @@ from PIL import Image
 from werkzeug.utils import secure_filename
 from AI.text_extracter import extract_text
 from AI.summarize import summarize_text
-from AI.quiz_gen.quiz_gen_groq import generate_questions as generate_questions_using_groq
+from AI.quiz_gen.quiz_gen_groq import generate_questions_but_with_long_text as generate_questions_using_groq
 from json import dumps
 
 @app.route('/')
