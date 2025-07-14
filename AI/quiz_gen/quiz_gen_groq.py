@@ -38,6 +38,10 @@ def generate_questions(input: str, quiz_type: str, question_count: int):
         - Only one choice should be correct (indicated by "answer_index").
         - Do NOT include explanations or non-JSON content.
         - DO NOT ADD ``` OR ANY SPECIAL CHARACTERS JUST PLAIN WORDS LIKE STRINGS
+        - Do not ADD backticks as it will ruin the json formatting
+        
+        🌐 Language Note:
+        - If the input text is in another language, generate the questions and choices in that same language.
 
         📘 Special Instructions:
         If quiz_type is "situational":
@@ -74,11 +78,11 @@ def generate_questions(input: str, quiz_type: str, question_count: int):
 
     except json.JSONDecodeError:
         return {
-            "error": "⚠️ Response was not valid JSON",
+            "error": f"⚠️ Response was not valid JSON content = {content}",
             "raw_output": content
         }
 
-def split_text(text: str, chunk_size: int = 1000):
+def split_text(text: str, chunk_size: int = 1000): 
     return [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
 
 def generate_questions_but_with_long_text(text: str, quiz_type: str, question_count: int):
