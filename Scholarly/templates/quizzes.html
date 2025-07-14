@@ -26,12 +26,14 @@
     </div>
   {% endif %}
 
-  <div class="text-center">
+  <div class="text-center d-flex justify-content-center gap-3 mt-3">
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addQuizModal">
       Create Quiz
     </button>
+    <a href="{{ url_for('quick_quiz') }}" class="btn btn-outline-secondary">
+      Quick Quiz ⚡
+    </a>
   </div>
-</div>
 
 <div class="modal fade" id="addQuizModal" tabindex="-1" aria-labelledby="addQuizModalLabel" aria-hidden="true">
   <div class="modal-dialog">

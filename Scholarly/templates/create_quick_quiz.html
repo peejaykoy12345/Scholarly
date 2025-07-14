@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block title %}Generate Quiz{% endblock %}
+{% block content %}
+<div class="content-wrapper">
+  <div class="card p-4">
+    <h2 class="mb-4">📝 Generate a Quiz</h2>
+    <form method="POST">
+      {{ form.hidden_tag() }}
+
+      <div class="mb-3">
+        {{ form.note.label(class="form-label") }}
+        {{ form.note(class="form-select") }}
+      </div>
+
+      <div class="mb-3">
+        {{ form.model.label(class="form-label") }}
+        {{ form.model(class="form-select") }}
+      </div>
+
+      <div class="mb-3">
+        {{ form.quiz_type.label(class="form-label") }}
+        {{ form.quiz_type(class="form-select") }}
+      </div>
+
+      <div class="mb-3">
+        {{ form.question_count.label(class="form-label") }}
+        {{ form.question_count(class="form-control", placeholder="e.g. 5") }}
+      </div>
+
+      <div class="d-grid">
+        {{ form.submit(class="btn btn-primary") }}
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -142,14 +142,14 @@ def quizzes():
     form.note.choices = [(note.id, note.title) for note in notes]
 
     if request.method == "POST" and request.form.get("confirm_quiz"):
-        print("RANN")
         try:
             questions = session.get("quiz_questions")
+            quiz_type = session.get('quiz_type')
             note_id = session.get("quiz_note_id")
 
             print(questions, " is questions from sesssion")
 
-            if not questions or not note_id:
+            if not questions or not note_id or not quiz_type:
                 flash("Session expired. Please generate the quiz again.", "danger")
                 return redirect(url_for("quizzes"))
 
@@ -160,7 +160,7 @@ def quizzes():
                 note_id=note.id,
                 title=note.title,
                 model_used="Groq",  
-                quiz_type="Multiple Choice",
+                quiz_type=quiz_type,
                 questions_json=dumps({"output": questions})
             )
             db.session.add(quiz)
@@ -168,6 +168,7 @@ def quizzes():
 
             session.pop("quiz_questions", None)
             session.pop("quiz_note_id", None)
+            session.pop('quiz_type', None)
 
             flash("✅ Quiz created successfully!", "success")
             return redirect(url_for('quizzes'))
@@ -205,10 +206,77 @@ def quizzes():
         
         session["quiz_questions"] = questions
         session["quiz_note_id"] = note.id
+        session['quiz_type'] = quiz_type
 
         return render_template("create_quiz_preview.html", questions=questions, note=note)
 
     return render_template("quizzes.html", form=form, notes=notes, quizzes=quizzes)
+
+@app.route('/quick_quiz', methods=['GET', 'POST'])
+def quick_quiz():
+    form = CreateQuizForm()
+    notes = Notes.query.filter_by(owner_id=current_user.id).order_by(Notes.date_created.desc()).all()
+    form.note.choices = [(note.id, note.title) for note in notes]
+
+    if form.validate_on_submit():
+        note_id = form.note.data
+        model = form.model.data
+        quiz_type = form.quiz_type.data
+        question_count = form.question_count.data
+
+        note = Notes.query.get_or_404(note_id)
+        if note.owner_id != current_user.id:
+            abort(403)
+
+        questions = generate_questions_using_groq(note.content, quiz_type, question_count)
+
+        if isinstance(questions, dict) and "error" in questions:
+            flash(questions["error"], "danger")
+            return redirect(url_for("quizzes"))
+
+        if isinstance(questions, dict) and "output" in questions:
+            questions = questions["output"]
+
+        session['temp_quiz'] = {
+            "questions": questions,
+            "title": note.title,
+            "quiz_type": quiz_type,
+            "model": model
+        }
+
+        return render_template('view_quiz.html', quiz=session['temp_quiz'], questions=questions)
+
+    elif request.method == 'POST' and 'temp_quiz' in session:
+        quiz_data = session['temp_quiz']
+        questions = quiz_data['questions']
+        results = []
+
+        for i, question in enumerate(questions):
+            selected = request.form.get(f"answer_{i}")
+            selected_index = int(selected) if selected else -1
+            correct_index = question["answer_index"]
+
+            result = {
+                "question": question["question"],
+                "correct_answer": question["choices"][correct_index],
+                "user_answer": question["choices"][selected_index] if 0 <= selected_index < len(question["choices"]) else "N/A",
+                "explanation": question.get("explanation", "No explanation provided"),
+                "is_correct": selected_index == correct_index
+            }
+            results.append(result)
+
+            print(
+                f"Q{i+1}: {question['question']} | "
+                f"Correct: {question['choices'][correct_index]} | "
+                f"Selected: {result['user_answer']} | "
+                f"{'✅' if result['is_correct'] else '❌'}"
+            )
+
+        return render_template('view_results.html', results=results, quiz=quiz_data)
+
+    return render_template('create_quick_quiz.html', form=form)
+
+
 
 @app.route('/delete_quiz/<int:quiz_id>', methods=['POST'])
 @login_required
