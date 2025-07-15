@@ -16,7 +16,7 @@
         </div>
       {% endfor %}
       <button class="btn btn-success" type="submit" name="confirm_quiz" value="1">Save Quiz</button>
-      <a href="{{ url_for('quizzes') }}" class="btn btn-secondary">Cancel</a>
+      <a href="{{ url_for('quiz.quizzes') }}" class="btn btn-secondary">Cancel</a>
     </form>
   {% else %}
     <div class="alert alert-warning">No questions to preview. Please try again.</div>

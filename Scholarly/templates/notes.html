@@ -16,7 +16,7 @@
         <div class="list-group-item mb-2 shadow-sm rounded">
           <small class="text-muted float-end">{{ note.date_created.strftime('%Y-%m-%d %H:%M') }}</small>
           <p class="mb-1">{{ note.title }}</p>
-          <a href="{{ url_for('view_notes', note_id=note.id) }}" class="btn btn-sm btn-primary mt-2">View</a>
+          <a href="{{ url_for('notes.view_notes', note_id=note.id) }}" class="btn btn-sm btn-primary mt-2">View</a>
         </div>
       {% endfor %}
     </div>
@@ -25,7 +25,7 @@
       <ul class="pagination justify-content-center">
         {% if notes.has_prev %}
           <li class="page-item">
-            <a class="page-link" href="{{ url_for('notes', page=notes.prev_num) }}">Previous</a>
+            <a class="page-link" href="{{ url_for('notes.notes', page=notes.prev_num) }}">Previous</a>
           </li>
         {% else %}
           <li class="page-item disabled">
@@ -38,14 +38,14 @@
             {% if page_num == notes.page %}
               <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
             {% else %}
-              <li class="page-item"><a class="page-link" href="{{ url_for('notes', page=page_num) }}">{{ page_num }}</a></li>
+              <li class="page-item"><a class="page-link" href="{{ url_for('notes.notes', page=page_num) }}">{{ page_num }}</a></li>
             {% endif %}
           {% endif %}
         {% endfor %}
 
         {% if notes.has_next %}
           <li class="page-item">
-            <a class="page-link" href="{{ url_for('notes', page=notes.next_num) }}">Next</a>
+            <a class="page-link" href="{{ url_for('notes.notes', page=notes.next_num) }}">Next</a>
           </li>
         {% else %}
           <li class="page-item disabled">
@@ -68,8 +68,8 @@
       </div>
       <div class="modal-body text-center">
         <p class="mb-4">How would you like to create your note?</p>
-        <a href="{{ url_for('manually_create_notes') }}" class="btn btn-outline-primary me-2">📝 Manually</a>
-        <a href="{{ url_for('create_ai_notes') }}" class="btn btn-outline-success">🤖 Use AI</a>
+        <a href="{{ url_for('notes.manually_create_notes') }}" class="btn btn-outline-primary me-2">📝 Manually</a>
+        <a href="{{ url_for('notes.create_ai_notes') }}" class="btn btn-outline-success">🤖 Use AI</a>
       </div>
     </div>
   </div>
