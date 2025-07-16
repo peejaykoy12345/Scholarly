@@ -6,7 +6,7 @@ from Scholarly import db
 from Scholarly.models import Notes
 from Scholarly.forms import CreateNoteForm, CreateAINotes
 from Scholarly.routes.AI.text_extracter import extract_text
-from Scholarly.routes.AI.summarize import summarize_text
+from Scholarly.routes.AI.notes_creator import generate_notes_using_ai as generate_notes
 
 notes_bp = Blueprint("notes", __name__)
 
@@ -34,39 +34,38 @@ def create_ai_notes():
         if 'confirm' in request.form:
             note = Notes(
                 title=session.get('title'),
-                content=session.get('summarized_text'),
+                content=session.get('generated_notes'),
                 owner_id=current_user.id
             )
             db.session.add(note)
             db.session.commit()
             session.pop('title', None)
-            session.pop('summarized_text', None)
+            session.pop('generated_notes', None)
             flash("Note saved successfully!", "success")
             return redirect(url_for('notes.notes'))
 
         if form.validate_on_submit():
-            if form.type.data == 'Summarize':
-                if 'preview' in request.form:
-                    uploaded_file = form.file.data
-                    if uploaded_file:
-                        os.makedirs("uploads", exist_ok=True)
-                        filename = secure_filename(uploaded_file.filename)
-                        save_path = os.path.join("uploads", filename)
-                        uploaded_file.save(save_path)
+            if 'preview' in request.form:
+                uploaded_file = form.file.data
+                if uploaded_file:
+                    os.makedirs("uploads", exist_ok=True)
+                    filename = secure_filename(uploaded_file.filename)
+                    save_path = os.path.join("uploads", filename)
+                    uploaded_file.save(save_path)
 
-                        text = extract_text(save_path)
-                        summarized_text = summarize_text(text)
+                    text = extract_text(save_path)
+                    generated_notes = generate_notes(text, form.type.data)
 
-                        os.remove(save_path)
+                    os.remove(save_path)
 
-                        session['title'] = form.title.data
-                        session['summarized_text'] = summarized_text
+                    session['title'] = form.title.data
+                    session['generated_notes'] = generated_notes
 
-                        return render_template(
-                            'preview_ai_notes.html',
-                            title=form.title.data,
-                            content=summarized_text
-                        )
+                    return render_template(
+                        'preview_ai_notes.html',
+                        title=form.title.data,
+                        content=generated_notes
+                    )
     return render_template('create_ai_notes.html', form=form)
 
 @notes_bp.route('/notes')
