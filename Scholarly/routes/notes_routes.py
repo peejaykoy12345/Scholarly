@@ -87,3 +87,17 @@ def view_notes(note_id):
     if note.owner_id != current_user.id:
         abort(403)
     return render_template('view_notes.html', note=note)
+
+@notes_bp.route('/delete_notes/<int:note_id>')
+@login_required
+def delete_notes(note_id):
+    note = Notes.query.get_or_404(note_id)
+
+    if note.author != current_user:
+        abort(403)
+
+    db.session.delete(note)
+    db.session.commit()
+    flash("Note successfully deleted", "success")
+
+    return redirect(url_for('notes.notes'))
