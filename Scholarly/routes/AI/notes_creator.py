@@ -12,42 +12,39 @@ headers = {
 }
 
 def generate_notes(input: str, notes_type: str) -> str:
-    system_prompt = """
-You are an AI assistant that generates study notes based on a specified note-taking method.
+    system_prompt = f"""
+        You are an AI assistant that generates study notes using the "{notes_type}" note-taking method.
 
-Currently, only the Cornell note-taking method is supported.
+        Instructions:
 
-When the user provides input material and specifies "Cornell" as the notes_type, return the notes in a Cornell-style format excluding the summary.
+        If the method is "Cornell":
+        - Format the output in two clearly labeled sections:
+        Cue Column:
+        - (Helpful questions based on the input)
+        - Do NOT include the summarization part as it is handle by another function
+        
+        Note-taking Area:
+        - (Answers to the questions above, in the same order)
 
-Format the output with two clear sections:
-Cue Column:
-- (a list of helpful questions derived from the input)
+        If the method is "Outline":
+        - Format the output using hierarchical bullet points like:
+        - Main idea
+            - Supporting detail
+            - Supporting detail
 
-Note-taking Area:
-- (answers to the questions written above, aligned in the same order)
+        If the method is "Summarize":
+        - Summarize it but dont remove the key ideas
 
-⚠️ Do not include summaries.
-❌ Do not explain the Cornell method.
-❌ Do not add commentary, greetings, or titles.
-✅ Just generate helpful Q&A pairs from the content.
-
-Example:
----
-Cue Column:
-- What is gravity?
-- Why do objects fall to Earth?
-- How does gravity affect space?
-
-Note-taking Area:
-- Gravity is a force that pulls objects toward one another.
-- Objects fall to Earth due to the gravitational pull of the planet.
-- Gravity affects the orbits of planets and the motion of galaxies.
----
-"""
-
-    if notes_type != "Cornell method":
-        return "Error: Unsupported note-taking method."
-
+        Rules:
+        ❌ Do NOT explain the method.
+        ❌ Do NOT include summaries, commentary, or greetings.
+        ❌ Do NOT use special formatting such as ##, **, ``` or any other formatting styles that cant be read by an ordinary text editor
+        ✅ Just return the notes in the correct format based on the specified method.
+        ✅ Each word or letter should be able to be read by a normal text editor
+        ✅ If needing bullet points use - as bullet points e.g:
+            - Dog
+            - Cat
+    """
     data = {
         "model": "meta-llama/llama-4-scout-17b-16e-instruct",
         "messages": [
@@ -98,14 +95,23 @@ def generate_notes_using_ai(text: str, method: str) -> str:
     chunks = split_text(text)
     all_notes = []
 
-    for chunk in chunks:
-        note = generate_notes(chunk, method)
-        all_notes.append(note)
+    if method == "Summarize":
 
-    combined_notes = "\n".join(all_notes)
+        for chunk in chunks:
+            summary = summarize(chunk)
+            all_notes.append(summary)
+        return "\n".join(all_notes)
 
-    if method == "Cornell method":
-        summary = summarize(text)
-        return combined_notes + "\n\nSummary:\n" + summary
-    
-    return combined_notes
+    else:
+        for chunk in chunks:
+            note = generate_notes(chunk, method)
+            all_notes.append(note)
+
+        combined_notes = "\n".join(all_notes)
+
+        if method == "Cornell method":
+            summary = summarize(text)  
+            return combined_notes + "\n\nSummary:\n" + summary
+
+        return combined_notes
+

@@ -7,7 +7,7 @@
   <h4 class="text-primary">{{ title }}</h4>
 
   <div class="bg-light border rounded p-3 mb-4" style="white-space: pre-wrap;">
-    {{ content }}
+    {{ content.lstrip() }}
   </div>
 
   <form method="POST" class="d-flex gap-2">
