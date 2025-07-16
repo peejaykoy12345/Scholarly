@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, render_template, flash, redirect, request, url_for, session, abort
+from flask import Blueprint, render_template, flash, redirect, request, url_for, abort
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 from Scholarly import db
@@ -30,17 +30,23 @@ def manually_create_notes():
 @login_required
 def create_ai_notes():
     form = CreateAINotes()
+
     if request.method == "POST":
         if 'confirm' in request.form:
+            title = request.form.get('title')
+            content = request.form.get('generated_notes')
+
+            if not title or not content:
+                flash("Missing title or content during confirmation.", "danger")
+                return redirect(url_for('notes.create_ai_notes'))
+
             note = Notes(
-                title=session.get('title'),
-                content=session.get('generated_notes'),
+                title=title,
+                content=content,
                 owner_id=current_user.id
             )
             db.session.add(note)
             db.session.commit()
-            session.pop('title', None)
-            session.pop('generated_notes', None)
             flash("Note saved successfully!", "success")
             return redirect(url_for('notes.notes'))
 
@@ -58,14 +64,13 @@ def create_ai_notes():
 
                     os.remove(save_path)
 
-                    session['title'] = form.title.data
-                    session['generated_notes'] = generated_notes
-
                     return render_template(
                         'preview_ai_notes.html',
                         title=form.title.data,
-                        content=generated_notes
+                        content=generated_notes,
+                        form=form
                     )
+
     return render_template('create_ai_notes.html', form=form)
 
 @notes_bp.route('/notes')
@@ -79,8 +84,6 @@ def notes():
 @login_required
 def view_notes(note_id):
     note = Notes.query.get_or_404(note_id)
-    
     if note.owner_id != current_user.id:
         abort(403)
-
     return render_template('view_notes.html', note=note)

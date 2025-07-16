@@ -11,6 +11,8 @@
   </div>
 
   <form method="POST" class="d-flex gap-2">
+    <input type="hidden" name="title" value="{{ title }}">
+    <input type="hidden" name="generated_notes" value="{{ content|e }}">
     <button type="submit" name="confirm" class="btn btn-success">✅ Confirm & Save</button>
     <a href="{{ url_for('notes.create_ai_notes') }}" class="btn btn-secondary">🔙 Go Back</a>
   </form>
