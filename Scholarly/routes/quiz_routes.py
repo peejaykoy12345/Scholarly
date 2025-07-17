@@ -1,7 +1,5 @@
-import os
 from flask import Blueprint, render_template, redirect, url_for, flash, request, session, abort
 from flask_login import current_user, login_required
-from werkzeug.utils import secure_filename
 from json import dumps
 from Scholarly import db
 from Scholarly.models import Notes, Quiz, QuizResult
@@ -10,6 +8,7 @@ from Scholarly.routes.AI.grader import grade_paper
 from Scholarly.routes.AI.quiz_gen.quiz_gen_groq import generate_questions_but_with_long_text as generate_questions_using_groq
 
 quiz_bp = Blueprint("quiz", __name__)
+
 
 @quiz_bp.route('/quizzes', methods=["GET", "POST"])
 @login_required
@@ -24,6 +23,7 @@ def quizzes():
             questions = session.get("quiz_questions")
             quiz_type = session.get('quiz_type')
             note_id = session.get("quiz_note_id")
+            answer_format = session.get("answer_format")
 
             if not questions or not note_id or not quiz_type:
                 flash("Session expired. Please generate the quiz again.", "danger")
@@ -45,6 +45,7 @@ def quizzes():
             session.pop("quiz_questions", None)
             session.pop("quiz_note_id", None)
             session.pop("quiz_type", None)
+            session.pop("answer_format", None)
 
             flash("✅ Quiz created successfully!", "success")
             return redirect(url_for("quiz.quizzes"))
@@ -58,6 +59,7 @@ def quizzes():
         model = form.model.data
         quiz_type = form.quiz_type.data
         question_count = form.question_count.data
+        answer_format = form.answer_format.data
 
         note = Notes.query.get_or_404(note_id)
         if note.owner_id != current_user.id:
@@ -67,7 +69,7 @@ def quizzes():
             flash("Unsupported model selected", "danger")
             return redirect(url_for("quiz.quizzes"))
 
-        questions = generate_questions_using_groq(note.content, quiz_type, question_count)
+        questions = generate_questions_using_groq(note.content, quiz_type, question_count, answer_format)
 
         if isinstance(questions, dict) and "error" in questions:
             flash(questions["error"], "danger")
@@ -79,6 +81,7 @@ def quizzes():
         session["quiz_questions"] = questions
         session["quiz_note_id"] = note.id
         session["quiz_type"] = quiz_type
+        session["answer_format"] = answer_format
 
         return render_template("create_quiz_preview.html", questions=questions, note=note)
 
@@ -126,6 +129,7 @@ def quick_quiz():
         quiz_data = session['temp_quiz']
         questions = quiz_data['questions']
         results = []
+
         for i, question in enumerate(questions):
             user_input = request.form.get(f"answer_{i}")
 
@@ -141,10 +145,8 @@ def quick_quiz():
                     "is_correct": selected_index == correct_index
                 }
 
-            elif question['answer_format'] == "No Choices":
-                question_string = question["question"]
-                answer_format = question.get("answer_format", "No Choices")
-                grade_data = grade_paper(question_string, user_input, answer_format)
+            elif question['answer_format'] in ["No Choices", "Essay form"]:
+                grade_data = grade_paper(question["question"], user_input, question["answer_format"])
                 result = {
                     "question": question["question"],
                     "correct_answer": grade_data.get("correct_answer", "N/A"),
@@ -153,26 +155,21 @@ def quick_quiz():
                     "is_correct": grade_data.get("result", "") == "Correct"
                 }
 
+            else:
+                result = {
+                    "question": question.get("question", "Unknown Question"),
+                    "correct_answer": "N/A",
+                    "user_answer": user_input or "",
+                    "explanation": "Unsupported answer format.",
+                    "is_correct": False
+                }
+
             results.append(result)
 
+        session.pop("temp_quiz", None)
         return render_template('view_results.html', results=results, quiz=quiz_data)
 
     return render_template('create_quick_quiz.html', form=form)
-
-
-@quiz_bp.route('/delete_quiz/<int:quiz_id>', methods=['POST'])
-@login_required
-def delete_quiz(quiz_id):
-    quiz = Quiz.query.get_or_404(quiz_id)
-
-    if quiz.owner_id != current_user.id:
-        abort(403)
-
-    QuizResult.query.filter_by(quiz_id=quiz.id).delete()
-    db.session.delete(quiz)
-    db.session.commit()
-    flash('✅ Quiz successfully deleted!', 'success')
-    return redirect(url_for('quiz.quizzes'))
 
 
 @quiz_bp.route('/view_quiz/<int:quiz_id>', methods=['GET', 'POST'])
@@ -187,16 +184,14 @@ def view_quiz(quiz_id):
 
     if request.method == 'POST':
         QuizResult.query.filter_by(quiz_id=quiz_id).delete()
-        question_counter = 0
 
-        for question in questions:
-            if quiz.answer_format == "Multiple Choice":
-                form_key = f"answer_{question_counter}"
-                selected = request.form.get(form_key)
+        for i, question in enumerate(questions):
+            user_input = request.form.get(f"answer_{i}")
 
-                selected_index = int(selected) if selected else -1
+            if question["answer_format"] == "Multiple Choice":
+                selected_index = int(user_input) if user_input and user_input.isdigit() else -1
                 correct_index = question["answer_index"]
- 
+
                 result = QuizResult(
                     user_id=current_user.id,
                     quiz_id=quiz.id,
@@ -206,13 +201,34 @@ def view_quiz(quiz_id):
                     explanation=question.get("explanation", "No explanation provided"),
                     is_correct=(selected_index == correct_index)
                 )
-                db.session.add(result)
+
+            elif question["answer_format"] in ["No Choices", "Essay form"]:
+                grade_data = grade_paper(question["question"], user_input, question["answer_format"])
+                result = QuizResult(
+                    user_id=current_user.id,
+                    quiz_id=quiz.id,
+                    question=question["question"],
+                    correct_answer=grade_data.get("correct_answer", "N/A"),
+                    user_answer=user_input or "",
+                    explanation=grade_data.get("explanation", "No explanation provided"),
+                    is_correct=(grade_data.get("result", "") == "Correct")
+                )
+
             else:
-                pass
-            question_counter += 1
+                result = QuizResult(
+                    user_id=current_user.id,
+                    quiz_id=quiz.id,
+                    question=question.get("question", "Unknown Question"),
+                    correct_answer="N/A",
+                    user_answer=user_input or "",
+                    explanation="Unsupported answer format.",
+                    is_correct=False
+                )
+
+            db.session.add(result)
 
         db.session.commit()
-        return redirect(url_for('quiz.quizzes'))
+        return redirect(url_for('quiz.view_results', quiz_id=quiz.id))
 
     return render_template('view_quiz.html', quiz=quiz, questions=questions)
 
@@ -224,3 +240,17 @@ def view_results(quiz_id):
     if quiz.owner_id != current_user.id:
         abort(403)
     return render_template('view_results.html', results=quiz.results, quiz=quiz)
+
+
+@quiz_bp.route('/delete_quiz/<int:quiz_id>', methods=['POST'])
+@login_required
+def delete_quiz(quiz_id):
+    quiz = Quiz.query.get_or_404(quiz_id)
+    if quiz.owner_id != current_user.id:
+        abort(403)
+
+    QuizResult.query.filter_by(quiz_id=quiz.id).delete()
+    db.session.delete(quiz)
+    db.session.commit()
+    flash('✅ Quiz successfully deleted!', 'success')
+    return redirect(url_for('quiz.quizzes'))

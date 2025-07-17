@@ -29,11 +29,13 @@
               {% endfor %}
             </div>
 
-          {% elif question.answer_format == "No Choices" %}
+          {% elif question.answer_format in ["No Choices", "Essay form"] %}
             <textarea class="form-control mt-2"
                       name="answer_{{ q_idx }}"
                       rows="3"
                       placeholder="Type your answer here..."></textarea>
+          {% else %}
+            <p class="text-danger">Unsupported question format.</p>
           {% endif %}
         </div>
 

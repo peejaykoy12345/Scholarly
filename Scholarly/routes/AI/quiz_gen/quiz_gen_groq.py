@@ -13,16 +13,36 @@ headers = {
 }
 
 def generate_questions(input: str, quiz_type: str, question_count: int, answer_format: str):
-    assert quiz_type.lower() in ["multiple choice", "situational"], "Invalid quiz_type"
+    assert quiz_type.lower() in ["identification", "situational"], "Invalid quiz_type"
 
     system_prompt = f"""
-        You are an AI that generates quizzes based on provided content. Your task is to create {question_count} {quiz_type.lower()} questions from the input text.
+        You are an AI that generates {quiz_type.lower()} quiz questions.
 
-        ⚠️ Respond ONLY in the following pure JSON format (no markdown, no explanations, no extra text):
+        Your task is to create EXACTLY {question_count} questions based on the input text.
+
+        ⚠️ FOLLOW THESE RULES:
+
+        - Each question MUST include:
+        - "question": <string>
+        - "answer_format": "{answer_format}"
+
+        - Only generate questions using answer_format = "{answer_format}"
+
+        - DO NOT use any other format. Only "{answer_format}" is allowed.
+
+        - If answer_format is "Multiple Choice":
+        - Add a "choices" list with 4 strings
+        - Add "answer_index" as an integer (0–3) indicating the correct answer
+
+        - If answer_format is "No Choices" or "Essay":
+        - DO NOT include "choices"
+        - DO NOT include "answer_index"
+
+        🧠 FORMAT EXAMPLES:
 
         If answer_format is "Multiple Choice":
         {{
-        "input": "<original input text here>",
+        "input": "<original input text>",
         "output": [
             {{
             "question": "What is the capital of France?",
@@ -33,45 +53,24 @@ def generate_questions(input: str, quiz_type: str, question_count: int, answer_f
         ]
         }}
 
-        If answer_format is "No Choices" or "Essay":
+        If answer_format is "No Choices":
         {{
-        "input": "<original input text here>",
+        "input": "<original input text>",
         "output": [
             {{
             "question": "Why is the sky blue?",
             "answer_format": "No Choices"
-            }},
-            {{
-            "question": "Describe how a bill becomes a law.",
-            "answer_format": "Essay"
             }}
         ]
         }}
 
-        📝 Notes:
-        - The number of items in "output" must exactly be {question_count}.
-        - Each question object must include "question" and "answer_format".
-        - For "Multiple Choice":
-            - Add exactly 4 options in "choices".
-            - Add an integer "answer_index" (0–3).
-        - For "No Choices" or "Essay":
-            - DO NOT include "choices" or "answer_index".
-        - All questions must match the `answer_format` value: "{answer_format}".
+        ⚠️ STRICT OUTPUT RULES:
+        - Only return raw JSON (no markdown, no code blocks, no commentary)
+        - The number of questions MUST be exactly {question_count}
+        - Each question MUST have "answer_format": "{answer_format}" (no others)
 
-        🌐 Language Note:
-        - If the input text is in another language, generate the questions and answers in that same language.
-
-        📘 Situational Instructions:
-        If quiz_type is "situational":
-        - Frame questions as real-life or practical situations requiring critical thinking.
-        - Focus on decision-making, ethics, or problem-solving in daily or academic settings.
-        - Keep it concise but meaningful.
-
-        🚫 STRICTLY FORBIDDEN:
-        - No markdown, no backticks, no explanations.
-        - Only return valid raw JSON as shown above.
+        🌐 Use the same language as the input text.
     """
-
 
 
     data = {
@@ -107,7 +106,7 @@ def generate_questions(input: str, quiz_type: str, question_count: int, answer_f
 def split_text(text: str, chunk_size: int = 1000): 
     return [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
 
-def generate_questions_but_with_long_text(text: str, quiz_type: str, question_count: int):
+def generate_questions_but_with_long_text(text: str, quiz_type: str, question_count: int, answer_format: str):
     chunks = split_text(text)
     total_chunks = len(chunks)
     questions_count_per_chunk = question_count // total_chunks
@@ -118,7 +117,7 @@ def generate_questions_but_with_long_text(text: str, quiz_type: str, question_co
     for index, chunk in enumerate(chunks):
         q_count = questions_count_per_chunk + (1 if index < remainder else 0)
 
-        result = generate_questions(chunk, quiz_type, q_count)
+        result = generate_questions(chunk, quiz_type, q_count, answer_format)
         if "output" in result:
             all_questions.extend(result["output"])
         else:
