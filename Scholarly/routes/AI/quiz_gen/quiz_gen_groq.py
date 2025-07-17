@@ -12,7 +12,7 @@ headers = {
     "Content-Type": "application/json"
 }
 
-def generate_questions(input: str, quiz_type: str, question_count: int):
+def generate_questions(input: str, quiz_type: str, question_count: int, answer_format: str):
     assert quiz_type.lower() in ["multiple choice", "situational"], "Invalid quiz_type"
 
     system_prompt = f"""
@@ -20,36 +20,58 @@ def generate_questions(input: str, quiz_type: str, question_count: int):
 
         ⚠️ Respond ONLY in the following pure JSON format (no markdown, no explanations, no extra text):
 
+        If answer_format is "Multiple Choice":
         {{
         "input": "<original input text here>",
         "output": [
             {{
             "question": "What is the capital of France?",
             "choices": ["Berlin", "Madrid", "Paris", "Rome"],
-            "answer_index": 2
+            "answer_index": 2,
+            "answer_format": "Multiple Choice"
+            }}
+        ]
+        }}
+
+        If answer_format is "No Choices" or "Essay":
+        {{
+        "input": "<original input text here>",
+        "output": [
+            {{
+            "question": "Why is the sky blue?",
+            "answer_format": "No Choices"
             }},
-            ...
+            {{
+            "question": "Describe how a bill becomes a law.",
+            "answer_format": "Essay"
+            }}
         ]
         }}
 
         📝 Notes:
         - The number of items in "output" must exactly be {question_count}.
-        - The "choices" list must always have exactly 4 unique options.
-        - Only one choice should be correct (indicated by "answer_index").
-        - Do NOT include explanations or non-JSON content.
-        - DO NOT ADD ``` OR ANY SPECIAL CHARACTERS JUST PLAIN WORDS LIKE STRINGS
-        - Do not ADD backticks as it will ruin the json formatting
-        
-        🌐 Language Note:
-        - If the input text is in another language, generate the questions and choices in that same language.
+        - Each question object must include "question" and "answer_format".
+        - For "Multiple Choice":
+            - Add exactly 4 options in "choices".
+            - Add an integer "answer_index" (0–3).
+        - For "No Choices" or "Essay":
+            - DO NOT include "choices" or "answer_index".
+        - All questions must match the `answer_format` value: "{answer_format}".
 
-        📘 Special Instructions:
+        🌐 Language Note:
+        - If the input text is in another language, generate the questions and answers in that same language.
+
+        📘 Situational Instructions:
         If quiz_type is "situational":
-        - Frame each question as a realistic or practical scenario where the user must make a decision or judgment.
-        - Use real-life contexts such as daily decisions, ethical dilemmas, school/work situations, etc.
-        - The situation must be clearly described, and the question should test critical thinking or understanding of the scenario.
+        - Frame questions as real-life or practical situations requiring critical thinking.
+        - Focus on decision-making, ethics, or problem-solving in daily or academic settings.
         - Keep it concise but meaningful.
+
+        🚫 STRICTLY FORBIDDEN:
+        - No markdown, no backticks, no explanations.
+        - Only return valid raw JSON as shown above.
     """
+
 
 
     data = {

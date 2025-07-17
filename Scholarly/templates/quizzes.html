@@ -35,54 +35,66 @@
     </a>
   </div>
 
-<div class="modal fade" id="addQuizModal" tabindex="-1" aria-labelledby="addQuizModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <form class="modal-content" method="POST" action="{{ url_for('quiz.quizzes') }}">
-      {{ form.hidden_tag() }}
+  <div class="modal fade" id="addQuizModal" tabindex="-1" aria-labelledby="addQuizModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="modal-content" method="POST" action="{{ url_for('quiz.quizzes') }}">
+        {{ form.hidden_tag() }}
 
-      <div class="modal-header">
-        <h5 class="modal-title" id="addQuizModalLabel">Create Quiz</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-
-      <div class="modal-body">
-        <div class="mb-3">
-          {{ form.note.label(class="form-label") }}
-          {{ form.note(class="form-select" + (" is-invalid" if form.note.errors else "")) }}
-          {% for error in form.note.errors %}
-            <div class="invalid-feedback">{{ error }}</div>
-          {% endfor %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="addQuizModalLabel">Create Quiz</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
-        <div class="mb-3">
-          {{ form.model.label(class="form-label") }}
-          {{ form.model(class="form-select" + (" is-invalid" if form.model.errors else "")) }}
-          {% for error in form.model.errors %}
-            <div class="invalid-feedback">{{ error }}</div>
-          {% endfor %}
+        <div class="modal-body">
+
+          <div class="mb-3">
+            {{ form.note.label(class="form-label") }}
+            {{ form.note(class="form-select" + (" is-invalid" if form.note.errors else "")) }}
+            {% for error in form.note.errors %}
+              <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="mb-3">
+            {{ form.model.label(class="form-label") }}
+            {{ form.model(class="form-select" + (" is-invalid" if form.model.errors else "")) }}
+            {% for error in form.model.errors %}
+              <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="mb-3">
+            {{ form.quiz_type.label(class="form-label") }}
+            {{ form.quiz_type(class="form-select" + (" is-invalid" if form.quiz_type.errors else "")) }}
+            {% for error in form.quiz_type.errors %}
+              <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="mb-3">
+            {{ form.answer_format.label(class="form-label") }}
+            {{ form.answer_format(class="form-select" + (" is-invalid" if form.answer_format.errors else "")) }}
+            {% for error in form.answer_format.errors %}
+              <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="mb-3">
+            {{ form.question_count.label(class="form-label") }}
+            {{ form.question_count(class="form-control" + (" is-invalid" if form.question_count.errors else ""), min="1", max="30") }}
+            {% for error in form.question_count.errors %}
+              <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+          </div>
+
         </div>
 
-        <div class="mb-3">
-          {{ form.quiz_type.label(class="form-label") }}
-          {{ form.quiz_type(class="form-select" + (" is-invalid" if form.quiz_type.errors else "")) }}
-          {% for error in form.quiz_type.errors %}
-            <div class="invalid-feedback">{{ error }}</div>
-          {% endfor %}
+        <div class="modal-footer">
+          {{ form.submit(class="btn btn-success") }}
         </div>
-
-        <div class="mb-3">
-          {{ form.question_count.label(class="form-label") }}
-          {{ form.question_count(class="form-control" + (" is-invalid" if form.question_count.errors else ""), min="1", max="30") }}
-          {% for error in form.question_count.errors %}
-            <div class="invalid-feedback">{{ error }}</div>
-          {% endfor %}
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        {{ form.submit(class="btn btn-success") }}
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
+
 </div>
 {% endblock %}

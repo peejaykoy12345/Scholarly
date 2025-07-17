@@ -6,6 +6,7 @@ from json import dumps
 from Scholarly import db
 from Scholarly.models import Notes, Quiz, QuizResult
 from Scholarly.forms import CreateQuizForm
+from Scholarly.routes.AI.grader import grade_paper
 from Scholarly.routes.AI.quiz_gen.quiz_gen_groq import generate_questions_but_with_long_text as generate_questions_using_groq
 
 quiz_bp = Blueprint("quiz", __name__)
@@ -96,12 +97,13 @@ def quick_quiz():
         model = form.model.data
         quiz_type = form.quiz_type.data
         question_count = form.question_count.data
+        answer_format = form.answer_format.data
 
         note = Notes.query.get_or_404(note_id)
         if note.owner_id != current_user.id:
             abort(403)
 
-        questions = generate_questions_using_groq(note.content, quiz_type, question_count)
+        questions = generate_questions_using_groq(note.content, quiz_type, question_count, answer_format)
 
         if isinstance(questions, dict) and "error" in questions:
             flash(questions["error"], "danger")
@@ -114,7 +116,8 @@ def quick_quiz():
             "questions": questions,
             "title": note.title,
             "quiz_type": quiz_type,
-            "model": model
+            "model": model,
+            "answer_format": answer_format
         }
 
         return render_template('view_quiz.html', quiz=session['temp_quiz'], questions=questions)
@@ -123,19 +126,33 @@ def quick_quiz():
         quiz_data = session['temp_quiz']
         questions = quiz_data['questions']
         results = []
-
         for i, question in enumerate(questions):
-            selected = request.form.get(f"answer_{i}")
-            selected_index = int(selected) if selected else -1
-            correct_index = question["answer_index"]
+            user_input = request.form.get(f"answer_{i}")
 
-            result = {
-                "question": question["question"],
-                "correct_answer": question["choices"][correct_index],
-                "user_answer": question["choices"][selected_index] if 0 <= selected_index < len(question["choices"]) else "N/A",
-                "explanation": question.get("explanation", "No explanation provided"),
-                "is_correct": selected_index == correct_index
-            }
+            if question['answer_format'] == "Multiple Choice":
+                selected_index = int(user_input) if user_input and user_input.isdigit() else -1
+                correct_index = question["answer_index"]
+
+                result = {
+                    "question": question["question"],
+                    "correct_answer": question["choices"][correct_index],
+                    "user_answer": question["choices"][selected_index] if 0 <= selected_index < len(question["choices"]) else "N/A",
+                    "explanation": question.get("explanation", "No explanation provided"),
+                    "is_correct": selected_index == correct_index
+                }
+
+            elif question['answer_format'] == "No Choices":
+                question_string = question["question"]
+                answer_format = question.get("answer_format", "No Choices")
+                grade_data = grade_paper(question_string, user_input, answer_format)
+                result = {
+                    "question": question["question"],
+                    "correct_answer": grade_data.get("correct_answer", "N/A"),
+                    "user_answer": user_input or "",
+                    "explanation": grade_data.get("explanation", "No explanation provided"),
+                    "is_correct": grade_data.get("result", "") == "Correct"
+                }
+
             results.append(result)
 
         return render_template('view_results.html', results=results, quiz=quiz_data)
@@ -173,22 +190,25 @@ def view_quiz(quiz_id):
         question_counter = 0
 
         for question in questions:
-            form_key = f"answer_{question_counter}"
-            selected = request.form.get(form_key)
+            if quiz.answer_format == "Multiple Choice":
+                form_key = f"answer_{question_counter}"
+                selected = request.form.get(form_key)
 
-            selected_index = int(selected) if selected else -1
-            correct_index = question["answer_index"]
-
-            result = QuizResult(
-                user_id=current_user.id,
-                quiz_id=quiz.id,
-                question=question["question"],
-                correct_answer=question["choices"][correct_index],
-                user_answer=question["choices"][selected_index] if 0 <= selected_index < len(question["choices"]) else "N/A",
-                explanation=question.get("explanation", "No explanation provided"),
-                is_correct=(selected_index == correct_index)
-            )
-            db.session.add(result)
+                selected_index = int(selected) if selected else -1
+                correct_index = question["answer_index"]
+ 
+                result = QuizResult(
+                    user_id=current_user.id,
+                    quiz_id=quiz.id,
+                    question=question["question"],
+                    correct_answer=question["choices"][correct_index],
+                    user_answer=question["choices"][selected_index] if 0 <= selected_index < len(question["choices"]) else "N/A",
+                    explanation=question.get("explanation", "No explanation provided"),
+                    is_correct=(selected_index == correct_index)
+                )
+                db.session.add(result)
+            else:
+                pass
             question_counter += 1
 
         db.session.commit()

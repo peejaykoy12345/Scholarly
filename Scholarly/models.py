@@ -31,6 +31,7 @@ class Quiz(db.Model):
     title = db.Column(db.String(), nullable=False)
     model_used = db.Column(db.String(50), nullable=False, default='Groq')
     quiz_type = db.Column(db.String(20), nullable=False)
+    answer_format = db.Column(db.String(20), nullable=True, server_default="Multiple Choice")
     questions_json = db.Column(db.Text(), nullable=False)
     results = db.relationship('QuizResult', backref='quiz', lazy=True)
     date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)

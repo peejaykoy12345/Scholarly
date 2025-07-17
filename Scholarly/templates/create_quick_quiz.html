@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block title %}Generate Quiz{% endblock %}
+
 {% block content %}
 <div class="content-wrapper">
   <div class="card p-4">
@@ -20,6 +21,11 @@
       <div class="mb-3">
         {{ form.quiz_type.label(class="form-label") }}
         {{ form.quiz_type(class="form-select") }}
+      </div>
+
+      <div class="mb-3">
+        {{ form.answer_format.label(class="form-label") }}
+        {{ form.answer_format(class="form-select") }}
       </div>
 
       <div class="mb-3">
