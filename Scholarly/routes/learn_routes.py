@@ -50,21 +50,21 @@ def flashcards():
         return render_template("learn/flashcards_preview.html", flashcards=session["flashcards_preview"])
     
     elif request.method == "POST" and "flashcards_preview" in session:
-        flashcards = Flashcards(
+        new_flashcards = Flashcards(
             user_id = current_user.id,
             note_id = session["flashcards_preview"]["note_id"],
             title = session["flashcards_preview"]["title"],
             flashcards_json = dumps({"output": session["flashcards_preview"]["flashcards_json"]})
         )
-        db.session.add(flashcards)
+        db.session.add(new_flashcards)
         db.session.commit()
         session.pop("flashcards_preview", None)
         flash("Flashcards successfully created!", "success")
-        return redirect(url_for('learn.home'))
+        return redirect(url_for('learn.flashcards'))
 
     elif request.method == "POST":
         flash("Session expired", "danger")
-        return redirect(url_for('learn.home'))
+        return redirect(url_for('learn.flashcards'))
 
     return render_template('learn/flashcards.html', flashcards_form=flashcards_form, flashcards=flashcards)
 
@@ -77,6 +77,19 @@ def view_flashcards(flashcard_id):
         abort(403)
 
     flashcards = flashcard.get_flashcards()
-    print(flashcards)
     
     return render_template('learn/view_flashcards.html', flashcards=flashcards)
+
+@learn_bp.route('/delete_flashcards/<int:flashcard_id>')
+@login_required
+def delete_flashcards(flashcard_id):
+    flashcard = Flashcards.query.get_or_404(flashcard_id)
+
+    if flashcard.author != current_user:
+        abort(403)
+
+    db.session.delete(flashcard)
+    db.session.commit()
+
+    flash("Flashcard deleted!", "success")
+    return redirect(url_for("learn.flashcards"))

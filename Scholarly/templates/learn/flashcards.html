@@ -9,10 +9,35 @@
     {% for flashcard in flashcards.items %}
       <div class="list-group-item d-flex justify-content-between align-items-center shadow-sm rounded mb-2">
         <div>{{ flashcard.title }}</div>
-        <a href="{{ url_for('learn.view_flashcards', flashcard_id=flashcard.id) }}" class="btn btn-sm btn-primary">View</a>
+        <div>
+          <a href="{{ url_for('learn.view_flashcards', flashcard_id=flashcard.id) }}" class="btn btn-sm btn-primary me-2">View</a>
+          <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ flashcard.id }}">Delete</button>
+        </div>
+      </div>
+
+      <div class="modal fade" id="deleteModal{{ flashcard.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ flashcard.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content shadow rounded">
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteModalLabel{{ flashcard.id }}">Confirm Deletion</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to delete <strong>{{ flashcard.title }}</strong>?
+            </div>
+            <div class="modal-footer">
+              <form method="POST" action="{{ url_for('learn.delete_flashcards', flashcard_id=flashcard.id) }}">
+                {{ csrf_token() }}
+                <button type="submit" class="btn btn-danger">Yes, delete</button>
+              </form>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+          </div>
+        </div>
       </div>
     {% endfor %}
   </div>
+
   <nav>
     <ul class="pagination justify-content-center">
       {% if flashcards.has_prev %}
@@ -44,8 +69,10 @@
   <p class="text-muted">No flashcards created.</p>
 {% endif %}
 
+<!-- Create Flashcards Button -->
 <button class="btn btn-success mt-4" data-bs-toggle="modal" data-bs-target="#createFlashcardsModal">Create Flashcards</button>
 
+<!-- Create Flashcards Modal -->
 <div class="modal fade" id="createFlashcardsModal" tabindex="-1" aria-labelledby="createFlashcardsModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content shadow-lg rounded">
