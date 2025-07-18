@@ -20,8 +20,10 @@ from Scholarly.routes.general_routes import general_bp
 from Scholarly.routes.auth_routes import auth_bp
 from Scholarly.routes.notes_routes import notes_bp
 from Scholarly.routes.quiz_routes import quiz_bp
+from Scholarly.routes.learn_routes import learn_bp
 
 app.register_blueprint(general_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(notes_bp)
 app.register_blueprint(quiz_bp)
+app.register_blueprint(learn_bp)

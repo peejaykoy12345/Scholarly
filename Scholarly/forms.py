@@ -59,3 +59,9 @@ class CreateQuizForm(FlaskForm):
     answer_format = SelectField('Select question format', choices=[("Multiple Choice", "Multiple Choice"), ("No Choices", "No Choices"), ("Essay form", "Essay form")], validators=[DataRequired()])
     question_count = IntegerField('Input how many questions you want', validators=[DataRequired(), NumberRange(min=1, max=30)])
     submit = SubmitField('Generate')
+
+class CreateFlashCardsForm(FlaskForm):
+    note = SelectField('Select Note', coerce=int, validators=[DataRequired()])
+    model = SelectField('Select Model', choices=[('Groq', 'Groq')], validators=[DataRequired()])
+    flashcards_count = IntegerField('Input how many questions you want', validators=[DataRequired(), NumberRange(min=1, max=30)])
+    submit = SubmitField('Generate')
