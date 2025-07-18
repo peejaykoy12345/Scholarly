@@ -9,12 +9,12 @@ Scholarly is a Flask-based AI-powered study tool that lets users:
 
 ## Features
 
-AI quiz generation using Groq LLM
-Essay and multiple choice grading
-Flashcard generation from notes using LLaMA
-Session-based preview & saving
-Quick quizzes without saving
-Clean Bootstrap-based UI
+- AI quiz generation using Groq LLM
+- Essay and multiple choice grading
+- Flashcard generation from notes using LLaMA
+- Session-based preview & saving
+- Quick quizzes without saving
+- Clean Bootstrap-based UI
 
 ## Setup
 
