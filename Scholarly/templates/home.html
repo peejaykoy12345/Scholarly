@@ -14,7 +14,7 @@
 
 {% if current_user.is_authenticated %}
 <div class="row g-4">
-  <div class="col-md-4">
+  <div class="col-md-3">
     <div class="card h-100">
       <div class="card-body">
         <h5 class="card-title">📝 Notes</h5>
@@ -24,17 +24,27 @@
     </div>
   </div>
 
-  <div class="col-md-4">
+  <div class="col-md-3">
     <div class="card h-100">
       <div class="card-body">
         <h5 class="card-title">🧠 Quizzes</h5>
         <p class="card-text">Test yourself with auto-generated quizzes to sharpen your understanding.</p>
-        <a href="/quizzes" class="btn btn-outline-primary">Take a Quiz</a>
+        <a href="{{ url_for('quiz.quizzes') }}" class="btn btn-outline-primary">Take a Quiz</a>
       </div>
     </div>
   </div>
 
-  <div class="col-md-4">
+  <div class="col-md-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">📚 Learn</h5>
+        <p class="card-text">Use flashcards powered by AI to help memorize key concepts from your notes.</p>
+        <a href="{{ url_for('learn.home ') }}" class="btn btn-outline-primary">Start Learning</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
     <div class="card h-100">
       <div class="card-body">
         <h5 class="card-title">👤 Profile</h5>
