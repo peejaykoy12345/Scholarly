@@ -13,9 +13,10 @@ def home():
     return render_template("learn/home.html")
 
 @learn_bp.route('/flashcards', methods=['GET', 'POST'])
+@login_required
 def flashcards():
     page = request.args.get('page', 1, type=int)
-    flashcards = Flashcards.query.filter_by(owner_id=current_user.id).order_by(Notes.date_created.desc()).paginate(page=page, per_page=10)
+    flashcards = Flashcards.query.filter_by(user_id=current_user.id).order_by(Flashcards.date_created.desc()).paginate(page=page, per_page=10)
     notes = Notes.query.filter_by(owner_id=current_user.id).order_by(Notes.date_created.desc()).all()
 
     flashcards_form = CreateFlashCardsForm()
@@ -65,7 +66,7 @@ def flashcards():
         flash("Session expired", "danger")
         return redirect(url_for('learn.home'))
 
-    return render_template('learn/flashcards.html', flashcards=flashcards)
+    return render_template('learn/flashcards.html', flashcards_form=flashcards_form, flashcards=flashcards)
 
 @learn_bp.route('/view_flashcards/<int:flashcard_id>')
 @login_required
@@ -76,5 +77,6 @@ def view_flashcards(flashcard_id):
         abort(403)
 
     flashcards = flashcard.get_flashcards()
+    print(flashcards)
     
-    return render_template('learn/flashcards.html', flashcards=flashcards)
+    return render_template('learn/view_flashcards.html', flashcards=flashcards)

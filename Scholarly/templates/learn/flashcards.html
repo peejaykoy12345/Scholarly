@@ -1,0 +1,80 @@
+{% extends "layout.html" %}
+{% block title %}Your Flashcards{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Your Flashcards</h2>
+
+{% if flashcards.items %}
+  <div class="list-group mb-4">
+    {% for flashcard in flashcards.items %}
+      <div class="list-group-item d-flex justify-content-between align-items-center shadow-sm rounded mb-2">
+        <div>{{ flashcard.title }}</div>
+        <a href="{{ url_for('learn.view_flashcards', flashcard_id=flashcard.id) }}" class="btn btn-sm btn-primary">View</a>
+      </div>
+    {% endfor %}
+  </div>
+  <nav>
+    <ul class="pagination justify-content-center">
+      {% if flashcards.has_prev %}
+        <li class="page-item">
+          <a class="page-link" href="{{ url_for('learn.flashcards', page=flashcards.prev_num) }}">&laquo;</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+      {% endif %}
+      {% for page_num in flashcards.iter_pages() %}
+        {% if page_num %}
+          <li class="page-item {% if page_num == flashcards.page %}active{% endif %}">
+            <a class="page-link" href="{{ url_for('learn.flashcards', page=page_num) }}">{{ page_num }}</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">…</span></li>
+        {% endif %}
+      {% endfor %}
+      {% if flashcards.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="{{ url_for('learn.flashcards', page=flashcards.next_num) }}">&raquo;</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+      {% endif %}
+    </ul>
+  </nav>
+{% else %}
+  <p class="text-muted">No flashcards created.</p>
+{% endif %}
+
+<button class="btn btn-success mt-4" data-bs-toggle="modal" data-bs-target="#createFlashcardsModal">Create Flashcards</button>
+
+<div class="modal fade" id="createFlashcardsModal" tabindex="-1" aria-labelledby="createFlashcardsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content shadow-lg rounded">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createFlashcardsModalLabel">Create Flashcards</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="{{ url_for('learn.flashcards') }}">
+        {{ flashcards_form.hidden_tag() }}
+        <div class="modal-body">
+          <div class="mb-3">
+            {{ flashcards_form.note.label(class="form-label") }}
+            {{ flashcards_form.note(class="form-select") }}
+          </div>
+          <div class="mb-3">
+            {{ flashcards_form.model.label(class="form-label") }}
+            {{ flashcards_form.model(class="form-select") }}
+          </div>
+          <div class="mb-3">
+            {{ flashcards_form.flashcards_count.label(class="form-label") }}
+            {{ flashcards_form.flashcards_count(class="form-control") }}
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Generate</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
