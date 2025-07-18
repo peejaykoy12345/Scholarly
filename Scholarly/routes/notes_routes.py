@@ -4,7 +4,7 @@ from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 from Scholarly import db
 from Scholarly.models import Notes
-from Scholarly.forms import CreateNoteForm, CreateAINotes
+from Scholarly.forms import CreateNoteForm, CreateAINotes, CSRFButton
 from Scholarly.routes.AI.text_extracter import extract_text
 from Scholarly.routes.AI.notes_creator import generate_notes_using_ai as generate_notes
 
@@ -78,6 +78,8 @@ def create_ai_notes():
 def notes():
     page = request.args.get('page', 1, type=int)
     notes = Notes.query.filter_by(owner_id=current_user.id).order_by(Notes.date_created.desc()).paginate(page=page, per_page=10)
+
+
     return render_template('notes.html', notes=notes)
 
 @notes_bp.route('/view_notes/<int:note_id>')

@@ -40,6 +40,9 @@ class CreateButton(FlaskForm):
 class DeleteButton(FlaskForm):
     pass
 
+class CSRFButton(FlaskForm):
+    pass
+
 class CreateNoteForm(FlaskForm):
     title = StringField("Title", validators=[DataRequired()])
     content = TextAreaField("Content", validators=[DataRequired()])

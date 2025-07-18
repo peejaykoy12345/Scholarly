@@ -1,19 +1,19 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, session, abort
 from flask_login import current_user, login_required
 from json import dumps
-from Scholarly import db
+from Scholarly import db, csrf
 from Scholarly.models import Notes, Quiz, QuizResult
-from Scholarly.forms import CreateQuizForm
+from Scholarly.forms import CreateQuizForm, CSRFButton
 from Scholarly.routes.AI.grader import grade_paper
 from Scholarly.routes.AI.quiz_gen.quiz_gen_groq import generate_questions_but_with_long_text as generate_questions_using_groq
 
 quiz_bp = Blueprint("quiz", __name__)
 
-
 @quiz_bp.route('/quizzes', methods=["GET", "POST"])
 @login_required
 def quizzes():
     form = CreateQuizForm()
+    csrf_button = CSRFButton()
     notes = Notes.query.filter_by(owner_id=current_user.id).order_by(Notes.date_created.desc()).all()
     quizzes = Quiz.query.filter_by(owner_id=current_user.id).order_by(Quiz.date_created.desc()).all()
     form.note.choices = [(note.id, note.title) for note in notes]
@@ -83,17 +83,20 @@ def quizzes():
         session["quiz_type"] = quiz_type
         session["answer_format"] = answer_format
 
-        return render_template("create_quiz_preview.html", questions=questions, note=note)
+        return render_template("create_quiz_preview.html", csrf_button=csrf_button, questions=questions, note=note)
 
-    return render_template("quizzes.html", form=form, notes=notes, quizzes=quizzes)
+    return render_template("quizzes.html", csrf_button=csrf_button, form=form, notes=notes, quizzes=quizzes)
 
 
 @quiz_bp.route('/quick_quiz', methods=['GET', 'POST'])
+@csrf.exempt
 @login_required
 def quick_quiz():
     form = CreateQuizForm()
     notes = Notes.query.filter_by(owner_id=current_user.id).order_by(Notes.date_created.desc()).all()
     form.note.choices = [(note.id, note.title) for note in notes]
+
+    csrf_button = CSRFButton()
 
     if form.validate_on_submit():
         note_id = form.note.data
@@ -123,7 +126,7 @@ def quick_quiz():
             "answer_format": answer_format
         }
 
-        return render_template('view_quiz.html', quiz=session['temp_quiz'], questions=questions)
+        return render_template('view_quiz.html', csrf_button=csrf_button, quiz=session['temp_quiz'], questions=questions)
 
     elif request.method == 'POST' and 'temp_quiz' in session:
         quiz_data = session['temp_quiz']
@@ -179,6 +182,8 @@ def view_quiz(quiz_id):
     if quiz.owner_id != current_user.id:
         abort(403)
 
+    csrf_button = CSRFButton()
+
     questions_data = quiz.get_questions()
     questions = questions_data["output"] if isinstance(questions_data, dict) else questions
 
@@ -230,7 +235,7 @@ def view_quiz(quiz_id):
         db.session.commit()
         return redirect(url_for('quiz.view_results', quiz_id=quiz.id))
 
-    return render_template('view_quiz.html', quiz=quiz, questions=questions)
+    return render_template('view_quiz.html', csrf_button=csrf_button, quiz=quiz, questions=questions)
 
 
 @quiz_bp.route('/view_results/<int:quiz_id>')

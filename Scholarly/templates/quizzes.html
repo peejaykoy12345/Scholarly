@@ -18,6 +18,7 @@
             <a href="{{ url_for('quiz.view_quiz', quiz_id=quiz.id) }}" class="btn btn-sm btn-primary">Take Quiz</a>
             <a href="{{ url_for('quiz.view_results', quiz_id=quiz.id) }}" class="btn btn-sm btn-info">View Results</a>
             <form method="POST" action="{{ url_for('quiz.delete_quiz', quiz_id=quiz.id) }}" onsubmit="return confirm('Are you sure you want to delete this quiz?');">
+              {{ csrf_button.hidden_tag() }}
               <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
           </div>

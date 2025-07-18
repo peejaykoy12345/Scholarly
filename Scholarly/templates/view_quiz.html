@@ -5,6 +5,7 @@
 <div class="container mt-5">
   <h2 class="mb-4 text-center">{{ quiz.title }}</h2>
   <form method="POST">
+    {{ csrf_button.hidden_tag() }}
     <div class="quiz-form bg-light p-4 rounded shadow-sm">
 
       {% for question in questions %}

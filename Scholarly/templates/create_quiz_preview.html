@@ -5,6 +5,7 @@
 
   {% if questions %}
     <form method="POST">
+    {{ csrf_button.hidden_tag() }}
       {% for q in questions %}
         <div class="mb-4">
           <strong>Q{{ loop.index }}:</strong> {{ q.question or '[Missing Question]' }}<br>
