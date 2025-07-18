@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}Preview Flashcards{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">🧠 Preview Flashcards</h2>
+
+<div class="card p-4 mb-4">
+  <h5 class="card-title">Note: {{ flashcards.title }}</h5>
+  <p class="text-muted mb-0">Model used: {{ flashcards.model }}</p>
+</div>
+
+<div class="list-group mb-4" style="max-height: 400px; overflow-y: auto;">
+  {% for card in flashcards.flashcards_json %}
+    <div class="list-group-item">
+      <strong>Q{{ loop.index }}:</strong> {{ card.question }}<br />
+      <span class="text-muted">A:</span> {{ card.answer }}
+    </div>
+  {% endfor %}
+</div>
+
+<form method="POST">
+  <div class="d-flex justify-content-between">
+    <a href="{{ url_for('learn.home') }}" class="btn btn-outline-secondary">Back</a>
+    <button type="submit" class="btn btn-success">Save Flashcards</button>
+  </div>
+</form>
+{% endblock %}

@@ -1,13 +1,21 @@
-from flask import Blueprint, render_template, abort
+from flask import Blueprint, render_template, url_for, redirect, abort, request, session, flash
 from flask_login import current_user, login_required
-from Scholarly.models import Notes
+from json import dumps
+from Scholarly import db
+from Scholarly.models import Notes, Flashcards
 from Scholarly.forms import CreateFlashCardsForm
 from Scholarly.routes.AI.learn.flashcards import generate_flashcards
 
 learn_bp = Blueprint("learn", __name__, url_prefix="/learn")
 
-@learn_bp.route('/', methods=['GET', 'POST'])
+@learn_bp.route("/")
 def home():
+    return render_template("learn/home.html")
+
+@learn_bp.route('/flashcards', methods=['GET', 'POST'])
+def flashcards():
+    page = request.args.get('page', 1, type=int)
+    flashcards = Flashcards.query.filter_by(owner_id=current_user.id).order_by(Notes.date_created.desc()).paginate(page=page, per_page=10)
     notes = Notes.query.filter_by(owner_id=current_user.id).order_by(Notes.date_created.desc()).all()
 
     flashcards_form = CreateFlashCardsForm()
@@ -22,10 +30,51 @@ def home():
         if note.author != current_user:
             abort(403)
 
-    return render_template('learn/home.html')
+        flashcards_json = generate_flashcards(note.content, flashcards_count)
 
-@learn_bp.route('/flashcards')
-@login_required
-def flashcards():
+        if isinstance(flashcards_json, dict) and "error" in flashcards_json:
+            flash(flashcards_json["error"], "danger")
+            return redirect(url_for("quiz.quizzes"))
+
+        if isinstance(flashcards_json, dict) and "output" in flashcards_json:
+            flashcards_json = flashcards_json["output"]
+
+        session["flashcards_preview"] = {
+            "flashcards_json": flashcards_json,
+            "title": note.title,
+            "note_id": note.id,
+            "model": model,
+        }
+
+        return render_template("learn/flashcards_preview.html", flashcards=session["flashcards_preview"])
     
-    return render_template('learn/flashcards.html')
+    elif request.method == "POST" and "flashcards_preview" in session:
+        flashcards = Flashcards(
+            user_id = current_user.id,
+            note_id = session["flashcards_preview"]["note_id"],
+            title = session["flashcards_preview"]["title"],
+            flashcards_json = dumps({"output": session["flashcards_preview"]["flashcards_json"]})
+        )
+        db.session.add(flashcards)
+        db.session.commit()
+        session.pop("flashcards_preview", None)
+        flash("Flashcards successfully created!", "success")
+        return redirect(url_for('learn.home'))
+
+    elif request.method == "POST":
+        flash("Session expired", "danger")
+        return redirect(url_for('learn.home'))
+
+    return render_template('learn/flashcards.html', flashcards=flashcards)
+
+@learn_bp.route('/view_flashcards/<int:flashcard_id>')
+@login_required
+def view_flashcards(flashcard_id):
+    flashcard = Flashcards.query.get_or_404(flashcard_id)
+
+    if flashcard.author != current_user:
+        abort(403)
+
+    flashcards = flashcard.get_flashcards()
+    
+    return render_template('learn/flashcards.html', flashcards=flashcards)

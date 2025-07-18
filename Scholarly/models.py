@@ -12,9 +12,12 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(150), unique=True, nullable=False)
     email = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
+
     notes = db.relationship('Notes', backref='author', lazy=True)
     quizzes = db.relationship('Quiz', backref='author', lazy=True)
     quiz_results = db.relationship('QuizResult', backref='user', lazy=True)
+
+    flashcards = db.relationship('Flashcards', backref="author", lazy=True)
 
 class Notes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -62,7 +65,9 @@ class QuizResult(db.Model):
 class Flashcards(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    note_id = db.Column(db.Integer, db.ForeignKey('note.id'), nullable=False)
+    note_id = db.Column(db.Integer, db.ForeignKey('notes.id'), nullable=False)
+
+    title = db.Column(db.String(), nullable=False)
 
     flashcards_json = db.Column(db.Text(), nullable=False)
     date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
