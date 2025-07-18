@@ -23,6 +23,7 @@ class Notes(db.Model):
     content = db.Column(db.String(20000), unique=True, nullable=False)
     date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     quizzes = db.relationship('Quiz', backref='note', lazy=True)
+    flashcards = db.relationship('Flashcards', backref='note', lazy=True)
 
 class Quiz(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -57,3 +58,17 @@ class QuizResult(db.Model):
     
     is_correct = db.Column(db.Boolean, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Flashcards(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    note_id = db.Column(db.Integer, db.ForeignKey('note.id'), nullable=False)
+
+    flashcards_json = db.Column(db.Text(), nullable=False)
+    date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def get_flashcards(self):
+        try:
+            return json.loads(self.flashcards_json)
+        except json.JSONDecodeError:
+            return []
