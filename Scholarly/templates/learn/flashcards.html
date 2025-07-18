@@ -27,7 +27,7 @@
             </div>
             <div class="modal-footer">
               <form method="POST" action="{{ url_for('learn.delete_flashcards', flashcard_id=flashcard.id) }}">
-                {{ csrf_token() }}
+                {{ delete_button.hidden_tag() }}
                 <button type="submit" class="btn btn-danger">Yes, delete</button>
               </form>
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -69,10 +69,8 @@
   <p class="text-muted">No flashcards created.</p>
 {% endif %}
 
-<!-- Create Flashcards Button -->
 <button class="btn btn-success mt-4" data-bs-toggle="modal" data-bs-target="#createFlashcardsModal">Create Flashcards</button>
 
-<!-- Create Flashcards Modal -->
 <div class="modal fade" id="createFlashcardsModal" tabindex="-1" aria-labelledby="createFlashcardsModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content shadow-lg rounded">

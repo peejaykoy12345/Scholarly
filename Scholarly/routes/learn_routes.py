@@ -3,7 +3,7 @@ from flask_login import current_user, login_required
 from json import dumps
 from Scholarly import db
 from Scholarly.models import Notes, Flashcards
-from Scholarly.forms import CreateFlashCardsForm
+from Scholarly.forms import CreateFlashCardsForm, DeleteButton
 from Scholarly.routes.AI.learn.flashcards import generate_flashcards
 
 learn_bp = Blueprint("learn", __name__, url_prefix="/learn")
@@ -21,6 +21,8 @@ def flashcards():
 
     flashcards_form = CreateFlashCardsForm()
     flashcards_form.note.choices = [(note.id, note.title) for note in notes]
+
+    delete_button = DeleteButton()
 
     if flashcards_form.validate_on_submit():
         note_id = flashcards_form.note.data
@@ -66,7 +68,7 @@ def flashcards():
         flash("Session expired", "danger")
         return redirect(url_for('learn.flashcards'))
 
-    return render_template('learn/flashcards.html', flashcards_form=flashcards_form, flashcards=flashcards)
+    return render_template('learn/flashcards.html', flashcards_form=flashcards_form, flashcards=flashcards, delete_button=delete_button)
 
 @learn_bp.route('/view_flashcards/<int:flashcard_id>')
 @login_required
@@ -80,7 +82,8 @@ def view_flashcards(flashcard_id):
     
     return render_template('learn/view_flashcards.html', flashcards=flashcards)
 
-@learn_bp.route('/delete_flashcards/<int:flashcard_id>')
+
+@learn_bp.route('/delete_flashcards/<int:flashcard_id>', methods=["POST"])
 @login_required
 def delete_flashcards(flashcard_id):
     flashcard = Flashcards.query.get_or_404(flashcard_id)

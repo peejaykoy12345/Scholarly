@@ -34,6 +34,9 @@ class AccountForm(FlaskForm):
     picture = FileField('Update profile picture', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Update')
 
+class DeleteButton(FlaskForm):
+    pass
+
 class CreateNoteForm(FlaskForm):
     title = StringField("Title", validators=[DataRequired()])
     content = TextAreaField("Content", validators=[DataRequired()])
