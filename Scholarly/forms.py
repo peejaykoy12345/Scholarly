@@ -34,6 +34,9 @@ class AccountForm(FlaskForm):
     picture = FileField('Update profile picture', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Update')
 
+class CreateButton(FlaskForm):
+    pass
+
 class DeleteButton(FlaskForm):
     pass
 

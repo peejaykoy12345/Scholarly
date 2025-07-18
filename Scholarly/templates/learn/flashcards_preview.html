@@ -20,6 +20,7 @@
 </div>
 
 <form method="POST">
+  {{ create_button.hidden_tag() }}
   <div class="d-flex justify-content-between">
     <a href="{{ url_for('learn.home') }}" class="btn btn-outline-secondary">Back</a>
     <button type="submit" class="btn btn-success">Save Flashcards</button>

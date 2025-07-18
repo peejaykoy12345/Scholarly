@@ -11,6 +11,7 @@
   </div>
 
   <form method="POST" class="d-flex gap-2">
+    {{ form.hidden_tag() }}
     <input type="hidden" name="title" value="{{ title }}">
     <input type="hidden" name="generated_notes" value="{{ content|e }}">
     <button type="submit" name="confirm" class="btn btn-success">✅ Confirm & Save</button>

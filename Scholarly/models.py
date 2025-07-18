@@ -68,12 +68,16 @@ class Flashcards(db.Model):
     note_id = db.Column(db.Integer, db.ForeignKey('notes.id'), nullable=False)
 
     title = db.Column(db.String(), nullable=False)
-
-    flashcards_json = db.Column(db.Text(), nullable=False)
     date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-    def get_flashcards(self):
-        try:
-            return json.loads(self.flashcards_json)
-        except json.JSONDecodeError:
-            return []
+    flashcard_list = db.relationship('Flashcard', backref='flashcards', lazy=True)
+
+class Flashcard(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    flashcards_id = db.Column(db.Integer, db.ForeignKey('flashcards.id'), nullable=False)
+
+    question = db.Column(db.Text(), nullable=False)
+    answer = db.Column(db.Text(), nullable=False)
+
+    data_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)

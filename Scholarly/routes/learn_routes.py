@@ -2,8 +2,8 @@ from flask import Blueprint, render_template, url_for, redirect, abort, request,
 from flask_login import current_user, login_required
 from json import dumps
 from Scholarly import db
-from Scholarly.models import Notes, Flashcards
-from Scholarly.forms import CreateFlashCardsForm, DeleteButton
+from Scholarly.models import Notes, Flashcards, Flashcard
+from Scholarly.forms import CreateFlashCardsForm, CreateButton, DeleteButton
 from Scholarly.routes.AI.learn.flashcards import generate_flashcards
 
 learn_bp = Blueprint("learn", __name__, url_prefix="/learn")
@@ -22,6 +22,7 @@ def flashcards():
     flashcards_form = CreateFlashCardsForm()
     flashcards_form.note.choices = [(note.id, note.title) for note in notes]
 
+    create_button = CreateButton()
     delete_button = DeleteButton()
 
     if flashcards_form.validate_on_submit():
@@ -49,16 +50,27 @@ def flashcards():
             "model": model,
         }
 
-        return render_template("learn/flashcards_preview.html", flashcards=session["flashcards_preview"])
+        return render_template("learn/flashcards_preview.html", flashcards=session["flashcards_preview"], create_button=create_button)
     
     elif request.method == "POST" and "flashcards_preview" in session:
         new_flashcards = Flashcards(
             user_id = current_user.id,
             note_id = session["flashcards_preview"]["note_id"],
             title = session["flashcards_preview"]["title"],
-            flashcards_json = dumps({"output": session["flashcards_preview"]["flashcards_json"]})
         )
         db.session.add(new_flashcards)
+        db.session.flush()
+
+        for flashcard in session["flashcards_preview"]["flashcards_json"]:
+            new_flashcard = Flashcard(
+                user_id = current_user.id,
+                flashcards_id = new_flashcards.id,
+                question = flashcard["question"],
+                answer = flashcard["answer"]
+            )
+
+            db.session.add(new_flashcard)
+
         db.session.commit()
         session.pop("flashcards_preview", None)
         flash("Flashcards successfully created!", "success")
@@ -73,25 +85,28 @@ def flashcards():
 @learn_bp.route('/view_flashcards/<int:flashcard_id>')
 @login_required
 def view_flashcards(flashcard_id):
-    flashcard = Flashcards.query.get_or_404(flashcard_id)
+    page = request.args.get("page", 1, type=int)
+    flashcards_set = Flashcards.query.get_or_404(flashcard_id)
 
-    if flashcard.author != current_user:
+    if flashcards_set.author != current_user:
         abort(403)
 
-    flashcards = flashcard.get_flashcards()
-    
-    return render_template('learn/view_flashcards.html', flashcards=flashcards)
+    paginated_flashcards = Flashcard.query.filter_by(flashcards_id=flashcards_set.id).order_by(Flashcard.id).paginate(page=page, per_page=1)
 
+    return render_template('learn/view_flashcards.html', flashcards=paginated_flashcards, flashcard_id=flashcard_id, title=flashcards_set.title)
 
 @learn_bp.route('/delete_flashcards/<int:flashcard_id>', methods=["POST"])
 @login_required
 def delete_flashcards(flashcard_id):
-    flashcard = Flashcards.query.get_or_404(flashcard_id)
+    flashcards = Flashcards.query.get_or_404(flashcard_id)
 
-    if flashcard.author != current_user:
+    if flashcards.author != current_user:
         abort(403)
 
-    db.session.delete(flashcard)
+    for flashcard in flashcards.flashcard_list:
+        db.session.delete(flashcard)
+
+    db.session.delete(flashcards)
     db.session.commit()
 
     flash("Flashcard deleted!", "success")

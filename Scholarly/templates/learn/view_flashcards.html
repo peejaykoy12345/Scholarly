@@ -2,24 +2,38 @@
 {% block title %}View Flashcards{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">Flashcards</h2>
+<h2 class="mb-4">Flashcards - {{ title }}</h2>
 
-{% if flashcards.output %}
-  <div class="accordion" id="flashcardAccordion">
-    {% for card in flashcards.output %}
-      <div class="card mb-3">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <span>Q{{ loop.index }}: {{ card.question }}</span>
-          <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#answer{{ loop.index }}">Show Answer</button>
-        </div>
-        <div id="answer{{ loop.index }}" class="collapse">
-          <div class="card-body">
-            <strong>Answer:</strong> {{ card.answer }}
-          </div>
-        </div>
-      </div>
-    {% endfor %}
+{% if flashcards.items %}
+  {% set card = flashcards.items[0] %}
+
+  <div class="card shadow rounded mb-3">
+    <div class="card-header">
+      <strong>Q{{ flashcards.page }}:</strong> {{ card.question }}
+    </div>
+    <div class="card-body collapse" id="answerBox">
+      <strong>Answer:</strong> {{ card.answer }}
+    </div>
+    <div class="card-footer d-flex justify-content-between">
+      <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#answerBox">
+        Show/Hide Answer
+      </button>
+    </div>
   </div>
+
+  <nav class="d-flex justify-content-between">
+    {% if flashcards.has_prev %}
+      <a class="btn btn-outline-primary" href="{{ url_for('learn.view_flashcards', flashcard_id=flashcard_id, page=flashcards.prev_num) }}">&laquo; Back</a>
+    {% else %}
+      <button class="btn btn-outline-secondary" disabled>&laquo; Back</button>
+    {% endif %}
+
+    {% if flashcards.has_next %}
+      <a class="btn btn-outline-primary" href="{{ url_for('learn.view_flashcards', flashcard_id=flashcard_id, page=flashcards.next_num) }}">Next &raquo;</a>
+    {% else %}
+      <button class="btn btn-outline-secondary" disabled>Next &raquo;</button>
+    {% endif %}
+  </nav>
 {% else %}
   <p class="text-muted">No flashcards found.</p>
 {% endif %}
