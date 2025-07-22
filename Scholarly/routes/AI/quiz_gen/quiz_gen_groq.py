@@ -89,6 +89,15 @@ def generate_questions(input: str, quiz_type: str, question_count: int, answer_f
         content = response.json()['choices'][0]['message']['content']
         parsed = json.loads(content)
         print(parsed)
+
+        if isinstance(parsed, list):
+            print("⚠️ Model returned a raw list. Wrapping it manually.")
+            return {
+                "input": input,
+                "output": parsed
+            }
+
+
         return parsed
 
     except KeyError:
@@ -118,10 +127,15 @@ def generate_questions_but_with_long_text(text: str, quiz_type: str, question_co
         q_count = questions_count_per_chunk + (1 if index < remainder else 0)
 
         result = generate_questions(chunk, quiz_type, q_count, answer_format)
-        if "output" in result:
+
+        if isinstance(result, dict) and "output" in result:
             all_questions.extend(result["output"])
+        elif isinstance(result, dict) and "error" in result:
+            print("❌ Error from Groq:", result["error"])
+            print("🔎 Full response:", result.get("response") or result.get("raw_output"))
         else:
-            print("Error:", result["error"])
+            print("⚠️ Unexpected result type:", type(result))
+            print(result)
 
     return {
         "input": text,

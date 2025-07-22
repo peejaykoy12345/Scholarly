@@ -92,6 +92,9 @@ Focus on core ideas and main takeaways. No titles, no commentary.
         return f"Error generating summary: {response.status_code} - {response.text}"
 
 def generate_notes_using_ai(text: str, method: str) -> str:
+    if method == "Extract Text":
+        return text
+
     chunks = split_text(text)
     all_notes = []
 

@@ -52,7 +52,7 @@ class CreateAINotes(FlaskForm):
     title = StringField("Title", validators=[DataRequired()])
     type = SelectField(
         'Select how you want your notes to be made',
-        choices=[('Summarize', 'Summarize'), ('Cornell method', 'Cornell method')],
+        choices=[("Extract Text", "Extract Text"), ('Summarize', 'Summarize'), ('Cornell method', 'Cornell method')],
         validators=[DataRequired()]
     )
     file = FileField(
