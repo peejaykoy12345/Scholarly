@@ -4,9 +4,9 @@ from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 from Scholarly import db
 from Scholarly.models import Notes
-from Scholarly.forms import CreateNoteForm, CreateAINotes, CSRFButton
-from Scholarly.routes.AI.text_extracter import extract_text
-from Scholarly.routes.AI.notes_creator import generate_notes_using_ai as generate_notes
+from Scholarly.forms import CreateNoteForm, CreateAINotes
+from Scholarly.AI.text_extracter import extract_text
+from Scholarly.AI.notes_creator import generate_notes_using_ai as generate_notes
 
 notes_bp = Blueprint("notes", __name__)
 

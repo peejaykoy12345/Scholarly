@@ -1,10 +1,9 @@
 from flask import Blueprint, render_template, url_for, redirect, abort, request, session, flash
 from flask_login import current_user, login_required
-from json import dumps
 from Scholarly import db
 from Scholarly.models import Notes, Flashcards, Flashcard
 from Scholarly.forms import CreateFlashCardsForm, CreateButton, DeleteButton
-from Scholarly.routes.AI.learn.flashcards import generate_flashcards
+from Scholarly.AI.learn.flashcards import generate_flashcards
 
 learn_bp = Blueprint("learn", __name__, url_prefix="/learn")
 

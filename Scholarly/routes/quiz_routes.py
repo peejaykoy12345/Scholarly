@@ -4,8 +4,8 @@ from json import dumps
 from Scholarly import db, csrf
 from Scholarly.models import Notes, Quiz, QuizResult
 from Scholarly.forms import CreateQuizForm, CSRFButton
-from Scholarly.routes.AI.grader import grade_paper
-from Scholarly.routes.AI.quiz_gen.quiz_gen_groq import generate_questions_but_with_long_text as generate_questions_using_groq
+from Scholarly.AI.grader import grade_paper
+from Scholarly.AI.quiz_gen.quiz_gen_groq import generate_questions_but_with_long_text as generate_questions_using_groq
 
 quiz_bp = Blueprint("quiz", __name__)
 
