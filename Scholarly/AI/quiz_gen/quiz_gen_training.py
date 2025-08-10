@@ -1,4 +1,4 @@
-from transformers import T5Tokenizer, T5ForConditionalGeneration, Trainer, TrainingArguments
+"""from transformers import T5Tokenizer, T5ForConditionalGeneration, Trainer, TrainingArguments
 from datasets import load_dataset
 
 model_name = 'google/flan-t5-small'
@@ -50,4 +50,4 @@ trainer = Trainer(
     train_dataset=tokenized
 )
 
-trainer.train()
+trainer.train()"""
