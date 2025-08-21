@@ -57,7 +57,7 @@ class CreateAINotes(FlaskForm):
     )
     file = FileField(
         'Upload image or PDF',
-        validators=[FileAllowed(['jpg', 'jpeg', 'png', 'pdf'], 'Images or PDFs only!')]
+        validators=[FileAllowed(['jpg', 'jpeg', 'png', 'pdf', 'pptx'], 'Images, .pdf, and .pptx only!')]
     )
     submit = SubmitField("Create notes")
 
